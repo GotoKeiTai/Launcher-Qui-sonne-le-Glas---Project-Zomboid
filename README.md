@@ -1,4 +1,4 @@
-# Glass Launcher
+# Glas Launcher
 
 Launcher Windows dédié au serveur Project Zomboid communautaire. Automatise la préparation du jeu avant connexion (vérification Steam, version du jeu, mod Java, mods Workshop) — n'installe ni ne remplace Steam.
 
