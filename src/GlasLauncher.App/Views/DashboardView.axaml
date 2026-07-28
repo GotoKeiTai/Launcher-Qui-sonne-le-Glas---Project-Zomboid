@@ -119,7 +119,7 @@
     <Grid Grid.Column="1" RowDefinitions="*,Auto">
 
       <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="680" Height="555"
-             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" Opacity="0.05" />
+             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" Opacity="0.14" />
 
       <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="0">
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="14">
