@@ -1,8 +1,14 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:GlasLauncher.App.ViewModels"
+             xmlns:conv="using:GlasLauncher.App.Converters"
              x:Class="GlasLauncher.App.Views.DashboardView"
              x:DataType="vm:DashboardViewModel">
+
+  <UserControl.Resources>
+    <conv:CheckStatusToBrushConverter x:Key="CheckStatusToBrushConverter" />
+    <conv:CheckStatusToGlyphConverter x:Key="CheckStatusToGlyphConverter" />
+  </UserControl.Resources>
 
   <Grid ColumnDefinitions="336,*">
 
@@ -31,14 +37,21 @@
             <ItemsControl.ItemTemplate>
               <DataTemplate x:DataType="vm:CheckItemViewModel">
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,9">
-                  <TextBlock Text="{Binding Status}" Foreground="{StaticResource OkBrush}" FontSize="11" />
-                  <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+                  <TextBlock Text="{Binding Status, Converter={StaticResource CheckStatusToGlyphConverter}}"
+                             Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrushConverter}}"
+                             FontSize="11" VerticalAlignment="Top" />
+                  <StackPanel Spacing="2">
+                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+                    <TextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
+                               FontSize="11" TextWrapping="Wrap" />
+                  </StackPanel>
                 </StackPanel>
               </DataTemplate>
             </ItemsControl.ItemTemplate>
           </ItemsControl>
 
           <Button Content="↗ S'abonner à la collection"
+                  Command="{Binding OpenWorkshopSubscribeCommand}"
                   IsVisible="{Binding WorkshopSubscribeUrl, Converter={x:Static ObjectConverters.IsNotNull}}"
                   Foreground="{StaticResource GoldBrush}" Background="Transparent" />
         </StackPanel>

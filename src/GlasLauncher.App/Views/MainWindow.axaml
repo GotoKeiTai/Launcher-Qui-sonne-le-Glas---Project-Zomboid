@@ -23,8 +23,8 @@
                        FontSize="12.5" Foreground="{StaticResource GoldBrush}" />
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
-            <Button Content="–" Width="34" Height="30" Background="Transparent" />
-            <Button Content="✕" Width="34" Height="30" Background="Transparent" />
+            <Button Content="–" Width="34" Height="30" Background="Transparent" Click="OnMinimizeClick" />
+            <Button Content="✕" Width="34" Height="30" Background="Transparent" Click="OnCloseClick" />
           </StackPanel>
         </Grid>
       </Border>

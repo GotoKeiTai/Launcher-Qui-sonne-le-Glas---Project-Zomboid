@@ -1,4 +1,6 @@
+using System;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
@@ -47,47 +49,66 @@ public partial class DashboardViewModel : ViewModelBase
     [RelayCommand]
     private async Task RefreshAsync()
     {
-        Checks.Clear();
-        News.Clear();
-        WorkshopSubscribeUrl = null;
-
-        var server = await _serverInfoService.GetServerInfoAsync();
-        Players = server.Players;
-        PingMs = server.PingMs;
-
-        foreach (var item in await _serverInfoService.GetNewsAsync())
+        try
         {
-            News.Add(item);
+            Checks.Clear();
+            News.Clear();
+            WorkshopSubscribeUrl = null;
+
+            var server = await _serverInfoService.GetServerInfoAsync();
+            Players = server.Players;
+            PingMs = server.PingMs;
+
+            foreach (var item in await _serverInfoService.GetNewsAsync())
+            {
+                News.Add(item);
+            }
+
+            var versionRequirement = await _serverInfoService.GetGameVersionRequirementAsync();
+            var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
+
+            var versionResult = detectedVersion is null
+                ? new CheckResult("Version conforme", CheckStatus.Failed, "Impossible de détecter Project Zomboid.")
+                : GameVersionEvaluator.Evaluate(detectedVersion, versionRequirement);
+            Checks.Add(new CheckItemViewModel(versionResult));
+
+            var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
+                requiredIds: new[] { "111", "222", "333" },
+                collectionId: "3719763771");
+            var workshopResult = WorkshopEvaluator.Evaluate(workshopStatus);
+            Checks.Add(new CheckItemViewModel(workshopResult));
+
+            if (workshopResult.Status == CheckStatus.Failed)
+            {
+                WorkshopSubscribeUrl = WorkshopEvaluator.GetCollectionSubscribeUrl(workshopStatus.CollectionId);
+            }
+
+            CanPlay = Checks.All(c => c.Status == CheckStatus.Passed);
+            StatusMessage = CanPlay
+                ? "Prêt à jouer — toutes les vérifications sont validées"
+                : "Action requise — abonnez-vous à la collection Workshop pour rejoindre le serveur";
         }
-
-        var versionRequirement = await _serverInfoService.GetGameVersionRequirementAsync();
-        var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
-
-        var versionResult = detectedVersion is null
-            ? new CheckResult("Version conforme", CheckStatus.Failed, "Impossible de détecter Project Zomboid.")
-            : GameVersionEvaluator.Evaluate(detectedVersion, versionRequirement);
-        Checks.Add(new CheckItemViewModel(versionResult));
-
-        var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
-            requiredIds: new[] { "111", "222", "333" },
-            collectionId: "3719763771");
-        var workshopResult = WorkshopEvaluator.Evaluate(workshopStatus);
-        Checks.Add(new CheckItemViewModel(workshopResult));
-
-        if (workshopResult.Status == CheckStatus.Failed)
+        catch (Exception ex)
         {
-            WorkshopSubscribeUrl = WorkshopEvaluator.GetCollectionSubscribeUrl(workshopStatus.CollectionId);
+            CanPlay = false;
+            StatusMessage = "Erreur lors de la vérification : " + ex.Message;
         }
-
-        CanPlay = Checks.All(c => c.Status == CheckStatus.Passed);
-        StatusMessage = CanPlay
-            ? "Prêt à jouer — toutes les vérifications sont validées"
-            : "Action requise — abonnez-vous à la collection Workshop pour rejoindre le serveur";
     }
 
     [RelayCommand(CanExecute = nameof(CanPlay))]
     private async Task PlayAsync()
     {
         await _steamEnvironment.LaunchGameAsync();
+    }
+
+    [RelayCommand]
+    private void OpenWorkshopSubscribe()
+    {
+        if (WorkshopSubscribeUrl is null)
+        {
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo(WorkshopSubscribeUrl) { UseShellExecute = true });
     }
 }
