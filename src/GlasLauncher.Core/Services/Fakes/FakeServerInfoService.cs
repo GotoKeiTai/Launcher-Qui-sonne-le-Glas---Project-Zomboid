@@ -23,4 +23,15 @@ public class FakeServerInfoService : IServerInfoService
             new("Nouveau mod Workshop ajouté à la liste requise", new DateOnly(2026, 7, 15),
                 "Le mod \"Filibuster Rhymes' Vehicle Pack\" a été ajouté à la liste des mods obligatoires.")
         });
+
+    public Task<IReadOnlyList<ChangelogEntry>> GetChangelogAsync() =>
+        Task.FromResult<IReadOnlyList<ChangelogEntry>>(new List<ChangelogEntry>
+        {
+            new("v0.1.0", new DateOnly(2026, 7, 20), new List<string>
+            {
+                "Version initiale du launcher.",
+                "Vérification automatique de la version du jeu et des mods Workshop requis.",
+                "Abonnement en un clic à la collection Workshop du serveur."
+            })
+        });
 }
