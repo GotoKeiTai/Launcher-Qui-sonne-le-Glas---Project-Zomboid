@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:GlasLauncher.App.ViewModels"
+             xmlns:conv="using:GlasLauncher.App.Converters"
+             x:Class="GlasLauncher.App.Views.NewsView"
+             x:DataType="vm:NewsViewModel">
+
+  <UserControl.Resources>
+    <conv:BoolToTabBackgroundConverter x:Key="BoolToTabBackgroundConverter" />
+    <conv:DateOnlyToFullFrenchLabelConverter x:Key="DateOnlyToFullFrenchLabelConverter" />
+  </UserControl.Resources>
+
+  <Grid RowDefinitions="Auto,*" Background="{StaticResource BgDeepBrush}">
+
+    <StackPanel Grid.Row="0" Margin="34,26,34,0">
+      <Grid ColumnDefinitions="Auto,*">
+        <Button Grid.Column="0" Content="← Retour" Command="{Binding BackCommand}"
+                Background="Transparent" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+                Padding="16,8" VerticalAlignment="Top" />
+        <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
+          <TextBlock Text="GLAS LAUNCHER" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+          <TextBlock Text="ACTUALITÉS" FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="28"
+                     Foreground="{StaticResource GoldBrightBrush}" />
+        </StackPanel>
+      </Grid>
+
+      <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,22,0,0">
+        <Button Content="Actualités" Command="{Binding ShowNewsTabCommand}"
+                Background="{Binding IsNewsTabActive, Converter={StaticResource BoolToTabBackgroundConverter}}"
+                Foreground="{StaticResource InkBrush}" Padding="18,8" />
+        <Button Content="Changelog" Command="{Binding ShowChangelogTabCommand}"
+                Background="{Binding IsChangelogTabActive, Converter={StaticResource BoolToTabBackgroundConverter}}"
+                Foreground="{StaticResource InkBrush}" Padding="18,8" />
+      </StackPanel>
+      <Border Height="1" Background="{StaticResource LineSoftBrush}" Margin="0,14,0,0" />
+    </StackPanel>
+
+    <ScrollViewer Grid.Row="1" Margin="34,20,34,20">
+      <StackPanel Spacing="14" MaxWidth="900" HorizontalAlignment="Left">
+
+        <ItemsControl ItemsSource="{Binding NewsItems}" IsVisible="{Binding IsNewsTabActive}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+                      BorderThickness="1" CornerRadius="10" Padding="20" Margin="0,0,0,14">
+                <StackPanel Spacing="8">
+                  <TextBlock Text="{Binding Date, Converter={StaticResource DateOnlyToFullFrenchLabelConverter}}"
+                             Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+                  <TextBlock Text="{Binding Title}" FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
+                             FontSize="18" Foreground="{StaticResource GoldBrightBrush}" TextWrapping="Wrap" />
+                  <TextBlock Text="{Binding Body}" Foreground="{StaticResource InkDimBrush}" FontSize="13"
+                             TextWrapping="Wrap" />
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <ItemsControl ItemsSource="{Binding ChangelogEntries}" IsVisible="{Binding IsChangelogTabActive}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+                      BorderThickness="1" CornerRadius="10" Padding="20" Margin="0,0,0,14">
+                <StackPanel Spacing="10">
+                  <Grid ColumnDefinitions="Auto,*">
+                    <TextBlock Text="{Binding Version}" FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
+                               FontSize="16" Foreground="{StaticResource GoldBrightBrush}" />
+                    <TextBlock Grid.Column="1" Text="{Binding Date, Converter={StaticResource DateOnlyToFullFrenchLabelConverter}}"
+                               Foreground="{StaticResource InkFaintBrush}" FontSize="11"
+                               HorizontalAlignment="Right" VerticalAlignment="Center" />
+                  </Grid>
+                  <ItemsControl ItemsSource="{Binding Changes}">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding StringFormat='• {0}'}" Foreground="{StaticResource InkDimBrush}"
+                                   FontSize="13" TextWrapping="Wrap" Margin="0,2,0,2" />
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </StackPanel>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
