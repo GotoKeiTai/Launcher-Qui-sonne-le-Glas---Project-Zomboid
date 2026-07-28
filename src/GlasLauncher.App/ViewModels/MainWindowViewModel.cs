@@ -27,6 +27,9 @@ public partial class MainWindowViewModel : ViewModelBase
     private async Task ToggleWorkshopScenarioAsync()
     {
         _fakeSteamEnvironment.SimulateWorkshopMissing = !_fakeSteamEnvironment.SimulateWorkshopMissing;
-        await _dashboard.RefreshCommand.ExecuteAsync(null);
+        if (_dashboard.RefreshCommand.CanExecute(null))
+        {
+            await _dashboard.RefreshCommand.ExecuteAsync(null);
+        }
     }
 }

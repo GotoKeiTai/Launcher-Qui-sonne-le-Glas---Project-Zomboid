@@ -41,6 +41,11 @@ public partial class App : Application
         // Real Windows-specific implementations are registered here in a later
         // plan, guarded by OperatingSystem.IsWindows(). Until then, every
         // platform (including macOS during development) uses the fakes.
+        // MainWindowViewModel depends on the concrete FakeSteamEnvironment (not ISteamEnvironment)
+        // for its dev-only scenario-switcher toggle. When real Windows services are added here,
+        // this registration and MainWindowViewModel's constructor will need to be revisited —
+        // either keep FakeSteamEnvironment registered everywhere (toggle becomes a no-op on
+        // real builds) or give the switcher its own dev-mode gate.
         services.AddSingleton<FakeSteamEnvironment>();
         services.AddSingleton<ISteamEnvironment>(sp => sp.GetRequiredService<FakeSteamEnvironment>());
         services.AddSingleton<IJavaModService, FakeJavaModService>();
