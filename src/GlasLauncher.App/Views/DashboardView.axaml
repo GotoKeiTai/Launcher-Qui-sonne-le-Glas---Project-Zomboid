@@ -95,8 +95,8 @@
             <Button Command="{Binding OpenWorkshopSubscribeCommand}"
                     IsVisible="{Binding WorkshopSubscribeUrl, Converter={x:Static ObjectConverters.IsNotNull}}"
                     Background="Transparent" Padding="0" Margin="28,-4,0,0" HorizontalAlignment="Left">
-              <TextBlock Text="↗ S'abonner à la collection « Pour Qui Sonne Le Glas »"
-                         Foreground="{StaticResource GoldBrush}" FontSize="12" TextWrapping="Wrap"
+              <TextBlock Text="↗ S'abonner à la collection « Qui sonne le Glas »"
+                         Foreground="{StaticResource GoldBrush}" FontSize="11" TextWrapping="NoWrap"
                          TextDecorations="Underline" />
             </Button>
           </StackPanel>
