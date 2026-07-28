@@ -119,4 +119,14 @@ public partial class DashboardViewModel : ViewModelBase
 
         Process.Start(new ProcessStartInfo(WorkshopSubscribeUrl) { UseShellExecute = true });
     }
+
+    public event Action? SettingsRequested;
+
+    public event Action? ChangelogRequested;
+
+    [RelayCommand]
+    private void NavigateToSettings() => SettingsRequested?.Invoke();
+
+    [RelayCommand]
+    private void NavigateToChangelog() => ChangelogRequested?.Invoke();
 }

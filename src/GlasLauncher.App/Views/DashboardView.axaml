@@ -117,7 +117,10 @@
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
-            <TextBlock Text="Tout voir · Changelog →" Foreground="{StaticResource GoldBrush}" FontSize="11.5" />
+            <Button Command="{Binding NavigateToChangelogCommand}"
+                    Background="Transparent" Padding="0" HorizontalAlignment="Left">
+              <TextBlock Text="Tout voir · Changelog →" Foreground="{StaticResource GoldBrush}" FontSize="11.5" />
+            </Button>
           </StackPanel>
 
         </StackPanel>
@@ -166,7 +169,8 @@
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
           <Button Content="Paramètres" MinWidth="148" Padding="32,14"
-                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  Command="{Binding NavigateToSettingsCommand}" />
           <Button Content="Réparer" MinWidth="148" Padding="32,14"
                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                   Background="{Binding CanPlay, Converter={StaticResource BoolToRepairBackgroundConverter}}"
