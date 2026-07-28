@@ -27,9 +27,18 @@ public partial class App : Application
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
+            var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
+
+            var firstRunStore = Services.GetRequiredService<IFirstRunStore>();
+            var hasCompletedFirstRun = firstRunStore.HasCompletedFirstRunAsync().GetAwaiter().GetResult();
+            if (!hasCompletedFirstRun)
+            {
+                mainWindowViewModel.ShowFirstRun();
+            }
+
             desktop.MainWindow = new MainWindow
             {
-                DataContext = Services.GetRequiredService<MainWindowViewModel>()
+                DataContext = mainWindowViewModel
             };
         }
 
@@ -51,8 +60,12 @@ public partial class App : Application
         services.AddSingleton<IJavaModService, FakeJavaModService>();
         services.AddSingleton<IUpdateService, FakeUpdateService>();
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();
+        services.AddSingleton<IFirstRunStore>(_ => FirstRunStore.CreateDefault());
 
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<SettingsViewModel>();
+        services.AddTransient<NewsViewModel>();
+        services.AddTransient<FirstRunViewModel>();
         services.AddTransient<MainWindowViewModel>();
     }
 }
