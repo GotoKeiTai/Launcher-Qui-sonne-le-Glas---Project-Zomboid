@@ -36,6 +36,10 @@ public partial class App : Application
             {
                 mainWindowViewModel.ShowFirstRun();
             }
+            else
+            {
+                _ = mainWindowViewModel.CheckForUpdatesAsync();
+            }
 
             desktop.MainWindow = new MainWindow
             {
