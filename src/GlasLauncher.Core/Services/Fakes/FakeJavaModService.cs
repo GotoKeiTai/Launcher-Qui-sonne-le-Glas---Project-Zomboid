@@ -15,8 +15,10 @@ public class FakeJavaModService : IJavaModService
     {
         progress.Report(new RepairProgress("Ancienne version supprimée", 10));
         await Task.Delay(300);
-        progress.Report(new RepairProgress("Téléchargement du mod Java", 60));
-        await Task.Delay(300);
+        progress.Report(new RepairProgress("Téléchargement du mod Java", 30, MegabytesDownloaded: 1.5, MegabytesTotal: 5.1));
+        await Task.Delay(200);
+        progress.Report(new RepairProgress("Téléchargement du mod Java", 60, MegabytesDownloaded: 3.4, MegabytesTotal: 5.1));
+        await Task.Delay(200);
         progress.Report(new RepairProgress("Vérification de l'intégrité (SHA-256)", 85));
         await Task.Delay(200);
         progress.Report(new RepairProgress("Installation", 100));
