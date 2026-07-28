@@ -48,6 +48,10 @@
         </ItemsControl>
       </Border>
 
+      <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource WarnBrush}" FontSize="12"
+                 HorizontalAlignment="Center" Margin="0,16,0,0" TextWrapping="Wrap" TextAlignment="Center"
+                 IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
       <TextBlock Text="Vous n'aurez plus besoin de repasser par ces étapes aux prochains lancements."
                  HorizontalAlignment="Center" Margin="0,20,0,0"
                  Foreground="{StaticResource InkFaintBrush}" FontSize="12" />

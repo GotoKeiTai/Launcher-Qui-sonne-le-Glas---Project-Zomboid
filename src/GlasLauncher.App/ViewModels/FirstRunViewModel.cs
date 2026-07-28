@@ -1,6 +1,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using GlasLauncher.Core.Services;
 
 namespace GlasLauncher.App.ViewModels;
@@ -24,6 +25,9 @@ public partial class FirstRunViewModel : ViewModelBase
     }
 
     public ObservableCollection<FirstRunStepViewModel> Steps { get; }
+
+    [ObservableProperty]
+    private string? _statusMessage;
 
     public async Task RunSequenceAsync()
     {
@@ -51,6 +55,10 @@ public partial class FirstRunViewModel : ViewModelBase
             }
 
             await _firstRunStore.MarkFirstRunCompleteAsync();
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Erreur lors de la préparation : " + ex.Message;
         }
         finally
         {
