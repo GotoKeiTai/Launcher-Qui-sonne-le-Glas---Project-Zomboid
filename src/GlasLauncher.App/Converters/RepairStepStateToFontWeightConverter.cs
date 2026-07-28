@@ -6,6 +6,10 @@ using GlasLauncher.App.ViewModels;
 
 namespace GlasLauncher.App.Converters;
 
+/// <summary>
+/// Done and Pending steps render with the same normal weight per the mockup — only the
+/// current InProgress step is emphasized. Mirrors RepairStepStateToBrushConverter's rationale.
+/// </summary>
 public class RepairStepStateToFontWeightConverter : IValueConverter
 {
     public static readonly RepairStepStateToFontWeightConverter Instance = new();
