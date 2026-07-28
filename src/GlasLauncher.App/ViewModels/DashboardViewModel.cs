@@ -124,9 +124,14 @@ public partial class DashboardViewModel : ViewModelBase
 
     public event Action? ChangelogRequested;
 
+    public event Action? RepairRequested;
+
     [RelayCommand]
     private void NavigateToSettings() => SettingsRequested?.Invoke();
 
     [RelayCommand]
     private void NavigateToChangelog() => ChangelogRequested?.Invoke();
+
+    [RelayCommand]
+    private void Repair() => RepairRequested?.Invoke();
 }

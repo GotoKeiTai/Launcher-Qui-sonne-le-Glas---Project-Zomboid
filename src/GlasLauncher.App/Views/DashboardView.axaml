@@ -173,6 +173,7 @@
                   Command="{Binding NavigateToSettingsCommand}" />
           <Button Content="Réparer" MinWidth="148" Padding="32,14"
                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  Command="{Binding RepairCommand}"
                   Background="{Binding CanPlay, Converter={StaticResource BoolToRepairBackgroundConverter}}"
                   BorderBrush="{StaticResource LineBrush}" BorderThickness="1" />
           <Button Content="Jouer" MinWidth="148" Padding="32,14"
