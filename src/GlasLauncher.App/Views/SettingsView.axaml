@@ -1,0 +1,105 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:GlasLauncher.App.ViewModels"
+             x:Class="GlasLauncher.App.Views.SettingsView"
+             x:DataType="vm:SettingsViewModel">
+
+  <Grid RowDefinitions="Auto,*" Background="{StaticResource BgDeepBrush}">
+
+    <Grid Grid.Row="0" ColumnDefinitions="Auto,*" Margin="34,26,34,20">
+      <Button Grid.Column="0" Content="← Retour" Command="{Binding BackCommand}"
+              Background="Transparent" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
+              Padding="16,8" VerticalAlignment="Top" />
+      <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
+        <TextBlock Text="GLAS LAUNCHER" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+        <TextBlock Text="PARAMÈTRES" FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="28"
+                   Foreground="{StaticResource GoldBrightBrush}" />
+      </StackPanel>
+    </Grid>
+
+    <Border Grid.Row="0" Height="1" VerticalAlignment="Bottom" Background="{StaticResource LineSoftBrush}" />
+
+    <ScrollViewer Grid.Row="1" Margin="34,20,34,20">
+      <StackPanel Spacing="20" MaxWidth="900" HorizontalAlignment="Left">
+
+        <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+                BorderThickness="1" CornerRadius="10" Padding="22">
+          <StackPanel Spacing="12">
+            <TextBlock Text="EMPLACEMENT D'INSTALLATION DU JEU" Foreground="{StaticResource GoldDimBrush}"
+                       FontSize="11" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="*,Auto">
+              <Border Background="{StaticResource BgVoidBrush}" BorderBrush="{StaticResource LineSoftBrush}"
+                      BorderThickness="1" CornerRadius="6" Padding="12,10">
+                <TextBlock Text="{Binding InstallPath}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+              </Border>
+              <Button Grid.Column="1" Content="Parcourir…" Command="{Binding BrowseCommand}"
+                      Margin="10,0,0,0" Padding="16,10"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            </Grid>
+            <TextBlock Text="Détecté automatiquement via votre bibliothèque Steam. Vous ne devriez avoir à changer ce champ que dans de rares cas."
+                       Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" TextWrapping="Wrap" />
+          </StackPanel>
+        </Border>
+
+        <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+                BorderThickness="1" CornerRadius="10" Padding="22">
+          <StackPanel Spacing="18">
+            <TextBlock Text="SUPPORT &amp; DIAGNOSTICS" Foreground="{StaticResource GoldDimBrush}"
+                       FontSize="11" FontWeight="SemiBold" />
+
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Rapport de diagnostic" Foreground="{StaticResource InkBrush}"
+                           FontWeight="SemiBold" FontSize="14" />
+                <TextBlock Text="Regroupe logs launcher + Project Zomboid et infos de version dans un .zip prêt pour Discord"
+                           Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" TextWrapping="Wrap" />
+                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
+                  <Button Content="Dossier logs launcher" Command="{Binding OpenLauncherLogsCommand}"
+                          Background="Transparent" Padding="0" Foreground="{StaticResource GoldBrush}" FontSize="12" />
+                  <TextBlock Text="·" Foreground="{StaticResource InkFaintBrush}" />
+                  <Button Content="Dossier logs Project Zomboid" Command="{Binding OpenPzLogsCommand}"
+                          Background="Transparent" Padding="0" Foreground="{StaticResource GoldBrush}" FontSize="12" />
+                </StackPanel>
+              </StackPanel>
+              <Button Grid.Column="1" Content="Générer" Command="{Binding GenerateDiagnosticReportCommand}"
+                      Padding="20,10" VerticalAlignment="Top"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            </Grid>
+
+            <Border Height="1" Background="{StaticResource LineSoftBrush}" />
+
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Discord du serveur" Foreground="{StaticResource InkBrush}"
+                           FontWeight="SemiBold" FontSize="14" />
+                <TextBlock Text="Assistance, annonces et demandes de whitelist"
+                           Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" />
+              </StackPanel>
+              <Button Grid.Column="1" Content="Rejoindre" Command="{Binding JoinDiscordCommand}"
+                      Padding="20,10" VerticalAlignment="Top"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            </Grid>
+
+            <Border Height="1" Background="{StaticResource LineSoftBrush}" />
+
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Spacing="4">
+                <TextBlock Text="Informations de version" Foreground="{StaticResource InkBrush}"
+                           FontWeight="SemiBold" FontSize="14" />
+                <TextBlock Text="Launcher v0.1.0 · Project Zomboid 41.78.16 · Mod Java v1.0.0"
+                           Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" />
+              </StackPanel>
+              <Button Grid.Column="1" Content="Copier" Command="{Binding CopyVersionInfoCommand}"
+                      Padding="20,10" VerticalAlignment="Top"
+                      HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+            </Grid>
+
+            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource OkBrush}" FontSize="12"
+                       IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>
