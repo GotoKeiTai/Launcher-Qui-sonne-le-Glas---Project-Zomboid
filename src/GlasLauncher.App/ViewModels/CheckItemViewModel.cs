@@ -10,6 +10,8 @@ public partial class CheckItemViewModel : ViewModelBase
         Name = result.Name;
         Status = result.Status;
         Message = result.Message;
+        InlineValue = Name == "Version conforme" && Status == CheckStatus.Passed ? Message : null;
+        ShowMessageBelow = Status == CheckStatus.Failed;
     }
 
     [ObservableProperty]
@@ -20,4 +22,10 @@ public partial class CheckItemViewModel : ViewModelBase
 
     [ObservableProperty]
     private string _message;
+
+    [ObservableProperty]
+    private string? _inlineValue;
+
+    [ObservableProperty]
+    private bool _showMessageBelow;
 }

@@ -5,7 +5,7 @@
         x:DataType="vm:MainWindowViewModel"
         Title="Glas Launcher"
         Width="1200" Height="760"
-        CanResize="False"
+        CanResize="True"
         SystemDecorations="None"
         Background="{StaticResource BgDeepBrush}">
 
@@ -16,12 +16,19 @@
       <Border DockPanel.Dock="Top" Height="44" Background="{StaticResource BgPanelBrush}"
               BorderBrush="{StaticResource LineSoftBrush}" BorderThickness="0,0,0,1">
         <Grid ColumnDefinitions="*,Auto" Margin="16,0,10,0">
+          <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="22" Height="18" />
+            <TextBlock Text="Glas Launcher" VerticalAlignment="Center"
+                       FontFamily="{StaticResource CinzelFont}"
+                       FontSize="14" Foreground="{StaticResource GoldBrush}" />
+          </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
             <Button Content="Scénario : mods manquants"
                     Command="{Binding ToggleWorkshopScenarioCommand}"
                     FontSize="10.5" Padding="8,4" Margin="0,0,10,0"
                     Background="Transparent" Foreground="{StaticResource InkFaintBrush}" />
             <Button Content="–" Width="34" Height="30" Background="Transparent" Click="OnMinimizeClick" />
+            <Button Content="□" Width="34" Height="30" Background="Transparent" Click="OnMaximizeClick" />
             <Button Content="✕" Width="34" Height="30" Background="Transparent" Click="OnCloseClick" />
           </StackPanel>
         </Grid>

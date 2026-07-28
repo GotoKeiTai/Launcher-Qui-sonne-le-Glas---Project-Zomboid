@@ -15,6 +15,13 @@ public partial class MainWindow : Window
         WindowState = WindowState.Minimized;
     }
 
+    private void OnMaximizeClick(object? sender, RoutedEventArgs e)
+    {
+        WindowState = WindowState == WindowState.Maximized
+            ? WindowState.Normal
+            : WindowState.Maximized;
+    }
+
     private void OnCloseClick(object? sender, RoutedEventArgs e)
     {
         Close();

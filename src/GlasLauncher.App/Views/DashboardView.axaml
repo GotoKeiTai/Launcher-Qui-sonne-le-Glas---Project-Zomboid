@@ -8,6 +8,8 @@
   <UserControl.Resources>
     <conv:CheckStatusToBrushConverter x:Key="CheckStatusToBrushConverter" />
     <conv:CheckStatusToGlyphConverter x:Key="CheckStatusToGlyphConverter" />
+    <conv:DateOnlyToFrenchLabelConverter x:Key="DateOnlyToFrenchLabelConverter" />
+    <conv:BoolToStatusBrushConverter x:Key="BoolToStatusBrushConverter" />
   </UserControl.Resources>
 
   <Grid ColumnDefinitions="336,*">
@@ -67,16 +69,19 @@
             <ItemsControl ItemsSource="{Binding Checks}">
               <ItemsControl.ItemTemplate>
                 <DataTemplate x:DataType="vm:CheckItemViewModel">
-                  <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,9">
-                    <TextBlock Text="{Binding Status, Converter={StaticResource CheckStatusToGlyphConverter}}"
+                  <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,0,0,9">
+                    <TextBlock Grid.Column="0" Text="{Binding Status, Converter={StaticResource CheckStatusToGlyphConverter}}"
                                Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrushConverter}}"
-                               FontSize="13" FontWeight="SemiBold" VerticalAlignment="Top" />
-                    <StackPanel Spacing="2">
+                               FontSize="13" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,0,10,0" />
+                    <StackPanel Grid.Column="1" Spacing="2">
                       <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
                       <TextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
-                                 FontSize="11" TextWrapping="Wrap" />
+                                 FontSize="11" TextWrapping="Wrap" IsVisible="{Binding ShowMessageBelow}" />
                     </StackPanel>
-                  </StackPanel>
+                    <TextBlock Grid.Column="2" Text="{Binding InlineValue}" Foreground="{StaticResource InkDimBrush}"
+                               FontSize="12" VerticalAlignment="Top"
+                               IsVisible="{Binding InlineValue, Converter={x:Static ObjectConverters.IsNotNull}}" />
+                  </Grid>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
@@ -97,7 +102,8 @@
                   <StackPanel Margin="0,0,0,13">
                     <TextBlock Text="{Binding Title}" Foreground="{StaticResource InkBrush}"
                                FontSize="12.5" TextWrapping="Wrap" />
-                    <TextBlock Text="{Binding Date}" Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
+                    <TextBlock Text="{Binding Date, Converter={StaticResource DateOnlyToFrenchLabelConverter}}"
+                               Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
                   </StackPanel>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
@@ -137,8 +143,12 @@
       </StackPanel>
 
       <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="34,0,34,22">
-        <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center"
-                    Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+        <StackPanel VerticalAlignment="Center" Spacing="3">
+          <TextBlock Text="STATUT" Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
+          <TextBlock Text="{Binding StatusMessage}"
+                     Foreground="{Binding CanPlay, Converter={StaticResource BoolToStatusBrushConverter}}"
+                     FontSize="13" />
+        </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
           <Button Content="Paramètres" MinWidth="148" Padding="32,14"
                   HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
