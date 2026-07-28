@@ -20,17 +20,25 @@
     <Border Grid.Row="0" Height="1" VerticalAlignment="Bottom" Background="{StaticResource LineSoftBrush}" />
 
     <ScrollViewer Grid.Row="1" Margin="34,20,34,20">
-      <StackPanel Spacing="20" MaxWidth="900" HorizontalAlignment="Left">
+      <StackPanel Spacing="20" MaxWidth="900" HorizontalAlignment="Center">
 
         <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
                 BorderThickness="1" CornerRadius="10" Padding="22">
           <StackPanel Spacing="12">
-            <TextBlock Text="EMPLACEMENT D'INSTALLATION DU JEU" Foreground="{StaticResource GoldDimBrush}"
-                       FontSize="11" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock Text="EMPLACEMENT D'INSTALLATION DU JEU" Foreground="{StaticResource GoldDimBrush}"
+                         FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <Border Grid.Column="1" Height="1" Background="{StaticResource LineSoftBrush}"
+                      VerticalAlignment="Center" Margin="12,0,0,0" />
+            </Grid>
             <Grid ColumnDefinitions="*,Auto">
               <Border Background="{StaticResource BgVoidBrush}" BorderBrush="{StaticResource LineSoftBrush}"
                       BorderThickness="1" CornerRadius="6" Padding="12,10">
-                <TextBlock Text="{Binding InstallPath}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+                <StackPanel Orientation="Horizontal" Spacing="10">
+                  <TextBlock Text="📁" FontSize="13" VerticalAlignment="Center" />
+                  <TextBlock Text="{Binding InstallPath}" Foreground="{StaticResource InkDimBrush}" FontSize="13"
+                             VerticalAlignment="Center" />
+                </StackPanel>
               </Border>
               <Button Grid.Column="1" Content="Parcourir…" Command="{Binding BrowseCommand}"
                       Margin="10,0,0,0" Padding="16,10"
@@ -44,8 +52,12 @@
         <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
                 BorderThickness="1" CornerRadius="10" Padding="22">
           <StackPanel Spacing="18">
-            <TextBlock Text="SUPPORT &amp; DIAGNOSTICS" Foreground="{StaticResource GoldDimBrush}"
-                       FontSize="11" FontWeight="SemiBold" />
+            <Grid ColumnDefinitions="Auto,*">
+              <TextBlock Text="SUPPORT &amp; DIAGNOSTICS" Foreground="{StaticResource GoldDimBrush}"
+                         FontSize="11" FontWeight="SemiBold" VerticalAlignment="Center" />
+              <Border Grid.Column="1" Height="1" Background="{StaticResource LineSoftBrush}"
+                      VerticalAlignment="Center" Margin="12,0,0,0" />
+            </Grid>
 
             <Grid ColumnDefinitions="*,Auto">
               <StackPanel Spacing="4">
@@ -54,11 +66,15 @@
                 <TextBlock Text="Regroupe logs launcher + Project Zomboid et infos de version dans un .zip prêt pour Discord"
                            Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" TextWrapping="Wrap" />
                 <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,4,0,0">
-                  <Button Content="Dossier logs launcher" Command="{Binding OpenLauncherLogsCommand}"
-                          Background="Transparent" Padding="0" Foreground="{StaticResource GoldBrush}" FontSize="12" />
+                  <Button Command="{Binding OpenLauncherLogsCommand}" Background="Transparent" Padding="0">
+                    <TextBlock Text="Dossier logs launcher" Foreground="{StaticResource GoldBrush}" FontSize="12"
+                               TextDecorations="Underline" />
+                  </Button>
                   <TextBlock Text="·" Foreground="{StaticResource InkFaintBrush}" />
-                  <Button Content="Dossier logs Project Zomboid" Command="{Binding OpenPzLogsCommand}"
-                          Background="Transparent" Padding="0" Foreground="{StaticResource GoldBrush}" FontSize="12" />
+                  <Button Command="{Binding OpenPzLogsCommand}" Background="Transparent" Padding="0">
+                    <TextBlock Text="Dossier logs Project Zomboid" Foreground="{StaticResource GoldBrush}" FontSize="12"
+                               TextDecorations="Underline" />
+                  </Button>
                 </StackPanel>
               </StackPanel>
               <Button Grid.Column="1" Content="Générer" Command="{Binding GenerateDiagnosticReportCommand}"

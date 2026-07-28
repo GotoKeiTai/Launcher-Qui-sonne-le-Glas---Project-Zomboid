@@ -36,7 +36,7 @@
     </StackPanel>
 
     <ScrollViewer Grid.Row="1" Margin="34,20,34,20">
-      <StackPanel Spacing="14" MaxWidth="900" HorizontalAlignment="Left">
+      <StackPanel Spacing="14" MaxWidth="900" HorizontalAlignment="Center">
 
         <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource WarnBrush}" FontSize="12"
                    IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
