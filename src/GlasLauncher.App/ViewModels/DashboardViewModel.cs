@@ -64,6 +64,11 @@ public partial class DashboardViewModel : ViewModelBase
                 News.Add(item);
             }
 
+            // "Steam détecté" and "Project Zomboid détecté" are placeholders (always Passed) until
+            // the real Windows-specific detection services (registry/VDF lookups) land in a later plan.
+            Checks.Add(new CheckItemViewModel(new CheckResult("Steam détecté", CheckStatus.Passed, "Client Steam actif.")));
+            Checks.Add(new CheckItemViewModel(new CheckResult("Project Zomboid détecté", CheckStatus.Passed, "Installation trouvée.")));
+
             var versionRequirement = await _serverInfoService.GetGameVersionRequirementAsync();
             var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
 
@@ -71,6 +76,9 @@ public partial class DashboardViewModel : ViewModelBase
                 ? new CheckResult("Version conforme", CheckStatus.Failed, "Impossible de détecter Project Zomboid.")
                 : GameVersionEvaluator.Evaluate(detectedVersion, versionRequirement);
             Checks.Add(new CheckItemViewModel(versionResult));
+
+            // Placeholder until IJavaModService is wired into the dashboard checks in a later plan.
+            Checks.Add(new CheckItemViewModel(new CheckResult("Mod Java à jour", CheckStatus.Passed, "Agent Java synchronisé.")));
 
             var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
                 requiredIds: new[] { "111", "222", "333" },

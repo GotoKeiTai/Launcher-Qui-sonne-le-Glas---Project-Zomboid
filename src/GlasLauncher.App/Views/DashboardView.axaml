@@ -15,84 +15,138 @@
     <!-- Sidebar -->
     <Border Grid.Column="0" Background="{StaticResource BgPanelBrush}"
             BorderBrush="{StaticResource LineSoftBrush}" BorderThickness="0,0,1,0">
-      <StackPanel Margin="22,26,22,18" Spacing="22">
+      <DockPanel Margin="22,24,22,18">
 
-        <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
-                BorderThickness="1" CornerRadius="10" Padding="14,12">
+        <!-- Footer: version info -->
+        <StackPanel DockPanel.Dock="Bottom" Spacing="6">
+          <Border Height="1" Background="{StaticResource LineSoftBrush}" Margin="0,0,0,8" />
           <Grid ColumnDefinitions="*,Auto">
-            <TextBlock Text="Serveur en ligne" Foreground="{StaticResource InkBrush}" FontWeight="SemiBold" />
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
-              <TextBlock Text="{Binding Players, StringFormat='{}{0} joueurs'}"
-                         Foreground="{StaticResource InkDimBrush}" FontSize="12" />
-              <TextBlock Text="{Binding PingMs, StringFormat='{}{0} ms'}"
-                         Foreground="{StaticResource InkDimBrush}" FontSize="12" />
-            </StackPanel>
+            <TextBlock Text="Launcher" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="v0.1.0" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
           </Grid>
-        </Border>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="Project Zomboid" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="41.78.16" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
+          </Grid>
+          <Grid ColumnDefinitions="*,Auto">
+            <TextBlock Text="Mod Java" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="v1.0.0" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
+          </Grid>
+        </StackPanel>
 
-        <StackPanel Spacing="9">
-          <TextBlock Text="VÉRIFICATIONS" Foreground="{StaticResource GoldDimBrush}"
-                     FontSize="11" FontWeight="SemiBold" />
-          <ItemsControl ItemsSource="{Binding Checks}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:CheckItemViewModel">
-                <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,9">
-                  <TextBlock Text="{Binding Status, Converter={StaticResource CheckStatusToGlyphConverter}}"
-                             Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrushConverter}}"
-                             FontSize="11" VerticalAlignment="Top" />
-                  <StackPanel Spacing="2">
-                    <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
-                    <TextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
-                               FontSize="11" TextWrapping="Wrap" />
+        <StackPanel Spacing="20">
+
+          <!-- Brand -->
+          <StackPanel HorizontalAlignment="Center" Spacing="8">
+            <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="60" Height="49" />
+            <TextBlock Text="POUR QUI SONNE LE GLAS" HorizontalAlignment="Center"
+                       FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="10.5"
+                       Foreground="{StaticResource GoldDimBrush}" />
+          </StackPanel>
+          <Border Height="1" Background="{StaticResource LineSoftBrush}" />
+
+          <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+                  BorderThickness="1" CornerRadius="10" Padding="14,12">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                <Ellipse Width="8" Height="8" Fill="{StaticResource OkBrush}" />
+                <TextBlock Text="Serveur en ligne" Foreground="{StaticResource InkBrush}" FontWeight="SemiBold" />
+              </StackPanel>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                <TextBlock Text="{Binding Players, StringFormat='{}{0} joueurs'}"
+                           Foreground="{StaticResource InkDimBrush}" FontSize="12" />
+                <TextBlock Text="{Binding PingMs, StringFormat='{}{0} ms'}"
+                           Foreground="{StaticResource InkDimBrush}" FontSize="12" />
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          <StackPanel Spacing="9">
+            <TextBlock Text="VÉRIFICATIONS" Foreground="{StaticResource GoldDimBrush}"
+                       FontSize="11" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding Checks}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate x:DataType="vm:CheckItemViewModel">
+                  <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,9">
+                    <TextBlock Text="{Binding Status, Converter={StaticResource CheckStatusToGlyphConverter}}"
+                               Foreground="{Binding Status, Converter={StaticResource CheckStatusToBrushConverter}}"
+                               FontSize="13" FontWeight="SemiBold" VerticalAlignment="Top" />
+                    <StackPanel Spacing="2">
+                      <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
+                      <TextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
+                                 FontSize="11" TextWrapping="Wrap" />
+                    </StackPanel>
                   </StackPanel>
-                </StackPanel>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
 
-          <Button Content="↗ S'abonner à la collection"
-                  Command="{Binding OpenWorkshopSubscribeCommand}"
-                  IsVisible="{Binding WorkshopSubscribeUrl, Converter={x:Static ObjectConverters.IsNotNull}}"
-                  Foreground="{StaticResource GoldBrush}" Background="Transparent" />
+            <Button Content="↗ S'abonner à la collection"
+                    Command="{Binding OpenWorkshopSubscribeCommand}"
+                    IsVisible="{Binding WorkshopSubscribeUrl, Converter={x:Static ObjectConverters.IsNotNull}}"
+                    Foreground="{StaticResource GoldBrush}" Background="Transparent" />
+          </StackPanel>
+          <Border Height="1" Background="{StaticResource LineSoftBrush}" />
+
+          <StackPanel Spacing="13">
+            <TextBlock Text="ACTUALITÉS" Foreground="{StaticResource GoldDimBrush}"
+                       FontSize="11" FontWeight="SemiBold" />
+            <ItemsControl ItemsSource="{Binding News}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Margin="0,0,0,13">
+                    <TextBlock Text="{Binding Title}" Foreground="{StaticResource InkBrush}"
+                               FontSize="12.5" TextWrapping="Wrap" />
+                    <TextBlock Text="{Binding Date}" Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+            <TextBlock Text="Tout voir · Changelog →" Foreground="{StaticResource GoldBrush}" FontSize="11.5" />
+          </StackPanel>
+
         </StackPanel>
-
-        <StackPanel Spacing="13">
-          <TextBlock Text="ACTUALITÉS" Foreground="{StaticResource GoldDimBrush}"
-                     FontSize="11" FontWeight="SemiBold" />
-          <ItemsControl ItemsSource="{Binding News}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <StackPanel Margin="0,0,0,13">
-                  <TextBlock Text="{Binding Title}" Foreground="{StaticResource InkBrush}"
-                             FontSize="12.5" TextWrapping="Wrap" />
-                  <TextBlock Text="{Binding Date}" Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
-                </StackPanel>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </StackPanel>
-
-      </StackPanel>
+      </DockPanel>
     </Border>
 
     <!-- Hero -->
     <Grid Grid.Column="1" RowDefinitions="*,Auto">
-      <StackPanel Grid.Row="0" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="0">
-        <TextBlock Text="PROJECT ZOMBOID" HorizontalAlignment="Center"
-                    Foreground="{StaticResource SilverBrush}" FontSize="11" />
-        <TextBlock Text="POUR QUI SONNE LE GLAS" HorizontalAlignment="Center" Margin="0,22,0,0"
-                    Width="700"
-                    FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="44"
-                    Foreground="{StaticResource GoldBrightBrush}" TextWrapping="Wrap" TextAlignment="Center" />
+
+      <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="560" Height="458"
+             HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0,10,0,0" Opacity="0.05" />
+
+      <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="0">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="14">
+          <Border Width="26" Height="1" Background="{StaticResource LineBrush}" VerticalAlignment="Center" />
+          <TextBlock Text="PROJECT ZOMBOID" Foreground="{StaticResource SilverBrush}" FontSize="11" />
+          <Border Width="26" Height="1" Background="{StaticResource LineBrush}" VerticalAlignment="Center" />
+        </StackPanel>
+
+        <TextBlock Text="Pour qui" HorizontalAlignment="Center" Margin="0,20,0,0" Width="260"
+                    FontFamily="{StaticResource CinzelFont}" FontSize="28" TextAlignment="Center"
+                    Foreground="{StaticResource GoldBrightBrush}" />
+        <TextBlock Text="SONNE" HorizontalAlignment="Center" Width="380"
+                    FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="52" TextAlignment="Center"
+                    Foreground="{StaticResource GoldBrightBrush}" />
+        <TextBlock Text="LE GLAS" HorizontalAlignment="Center" Width="380"
+                    FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="52" TextAlignment="Center"
+                    Foreground="{StaticResource GoldBrightBrush}" />
+
+        <TextBlock Text="◆" HorizontalAlignment="Center" Margin="0,16,0,0" FontSize="12"
+                   Foreground="{StaticResource GoldDimBrush}" />
       </StackPanel>
 
       <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="34,0,34,22">
         <TextBlock Text="{Binding StatusMessage}" VerticalAlignment="Center"
                     Foreground="{StaticResource InkDimBrush}" FontSize="13" />
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
-          <Button Content="Paramètres" MinWidth="148" Padding="32,14" />
-          <Button Content="Réparer" MinWidth="148" Padding="32,14" />
+          <Button Content="Paramètres" MinWidth="148" Padding="32,14"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
+          <Button Content="Réparer" MinWidth="148" Padding="32,14"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
+                  Background="Transparent" BorderBrush="{StaticResource LineBrush}" BorderThickness="1" />
           <Button Content="Jouer" MinWidth="148" Padding="32,14"
+                  HorizontalContentAlignment="Center" VerticalContentAlignment="Center"
                   Command="{Binding PlayCommand}"
                   FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
                   Background="{StaticResource GoldBrush}" Foreground="#231a08" />
