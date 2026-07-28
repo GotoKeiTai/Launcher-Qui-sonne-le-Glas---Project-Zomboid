@@ -1,0 +1,71 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:GlasLauncher.App.ViewModels"
+             xmlns:conv="using:GlasLauncher.App.Converters"
+             x:Class="GlasLauncher.App.Views.UpdateModalView"
+             x:DataType="vm:UpdateModalViewModel">
+
+  <UserControl.Resources>
+    <conv:BoolToStatusBrushConverter x:Key="BoolToStatusBrushConverter" />
+  </UserControl.Resources>
+
+  <Border Width="480" CornerRadius="16" Padding="40,36"
+          Background="{StaticResource BgPanelBrush}"
+          BorderBrush="{StaticResource LineBrush}" BorderThickness="1">
+    <StackPanel Spacing="0">
+
+      <Border Width="64" Height="64" CornerRadius="32" HorizontalAlignment="Center"
+              Background="{StaticResource BgPanel2Brush}"
+              BorderBrush="{StaticResource LineSoftBrush}" BorderThickness="1">
+        <TextBlock Text="↑" FontSize="22" Foreground="{StaticResource GoldBrush}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" />
+      </Border>
+
+      <TextBlock Text="MISE À JOUR DISPONIBLE" HorizontalAlignment="Center" Margin="0,20,0,0"
+                 FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="20"
+                 Foreground="{StaticResource GoldBrightBrush}" />
+
+      <TextBlock Text="Une nouvelle version de Glas Launcher est prête à être installée."
+                 HorizontalAlignment="Center" Margin="0,14,0,0" Width="380"
+                 Foreground="{StaticResource InkDimBrush}" FontSize="13"
+                 TextAlignment="Center" TextWrapping="Wrap" />
+
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="10" Margin="0,20,0,0">
+        <TextBlock Text="{Binding UpdateInfo.CurrentVersion}" Foreground="{StaticResource InkDimBrush}" FontSize="14" />
+        <TextBlock Text="→" Foreground="{StaticResource InkFaintBrush}" FontSize="14" />
+        <TextBlock Text="{Binding UpdateInfo.LatestVersion}" Foreground="{StaticResource GoldBrush}" FontWeight="Bold" FontSize="14" />
+      </StackPanel>
+
+      <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
+              BorderThickness="1" CornerRadius="10" Padding="20" Margin="0,24,0,0">
+        <ItemsControl ItemsSource="{Binding UpdateInfo.ChangelogEntries}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate x:DataType="x:String">
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+                <TextBlock Text="–" Foreground="{StaticResource GoldDimBrush}" FontSize="13" />
+                <TextBlock Text="{Binding}" Foreground="{StaticResource InkBrush}" FontSize="13" TextWrapping="Wrap" />
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Border>
+
+      <TextBlock Text="{Binding StatusMessage}" Margin="0,18,0,0"
+                 Foreground="{Binding IsStatusSuccess, Converter={StaticResource BoolToStatusBrushConverter}}"
+                 FontSize="12" TextWrapping="Wrap" TextAlignment="Center"
+                 IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
+      <Grid ColumnDefinitions="*,*" Margin="0,24,0,0">
+        <Button Grid.Column="0" Content="Plus tard" Command="{Binding DismissCommand}"
+                IsEnabled="{Binding !IsApplying}" Margin="0,0,6,0"
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,14" />
+        <Button Grid.Column="1" Content="METTRE À JOUR" Command="{Binding ApplyCommand}"
+                IsEnabled="{Binding !IsApplying}" Margin="6,0,0,0"
+                FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
+                Background="{StaticResource GoldBrush}" Foreground="#231a08"
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,14" />
+      </Grid>
+
+    </StackPanel>
+  </Border>
+</UserControl>
