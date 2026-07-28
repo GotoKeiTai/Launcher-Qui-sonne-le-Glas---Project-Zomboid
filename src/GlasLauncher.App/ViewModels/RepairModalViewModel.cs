@@ -14,18 +14,18 @@ public partial class RepairModalViewModel : ViewModelBase
 {
     private static readonly string[] StepOrder =
     {
-        "Ancienne version supprimée",
-        "Téléchargement du mod Java",
-        "Vérification de l'intégrité (SHA-256)",
-        "Installation"
+        RepairStepNames.OldVersionRemoved,
+        RepairStepNames.DownloadingJavaMod,
+        RepairStepNames.VerifyingIntegrity,
+        RepairStepNames.Installing
     };
 
     private static readonly Dictionary<string, string> StepDescriptions = new()
     {
-        ["Ancienne version supprimée"] = "Suppression de l'ancienne version du mod Java…",
-        ["Téléchargement du mod Java"] = "Téléchargement de la dernière version du mod Java depuis le serveur Glas Launcher…",
-        ["Vérification de l'intégrité (SHA-256)"] = "Vérification de l'intégrité du fichier téléchargé…",
-        ["Installation"] = "Installation du mod Java…"
+        [RepairStepNames.OldVersionRemoved] = "Suppression de l'ancienne version du mod Java…",
+        [RepairStepNames.DownloadingJavaMod] = "Téléchargement de la dernière version du mod Java depuis le serveur Glas Launcher…",
+        [RepairStepNames.VerifyingIntegrity] = "Vérification de l'intégrité du fichier téléchargé…",
+        [RepairStepNames.Installing] = "Installation du mod Java…"
     };
 
     private readonly IJavaModService _javaModService;
@@ -77,6 +77,14 @@ public partial class RepairModalViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
+            foreach (var step in Steps)
+            {
+                if (step.State == FirstRunStepState.InProgress)
+                {
+                    step.State = FirstRunStepState.Pending;
+                }
+            }
+
             HasError = true;
             StatusMessage = "Erreur lors de la réparation : " + ex.Message;
         }

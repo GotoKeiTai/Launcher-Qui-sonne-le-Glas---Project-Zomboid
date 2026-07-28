@@ -25,10 +25,10 @@ public class FakeJavaModServiceTests
         Assert.Equal(
             new[]
             {
-                "Ancienne version supprimée",
-                "Téléchargement du mod Java",
-                "Vérification de l'intégrité (SHA-256)",
-                "Installation"
+                RepairStepNames.OldVersionRemoved,
+                RepairStepNames.DownloadingJavaMod,
+                RepairStepNames.VerifyingIntegrity,
+                RepairStepNames.Installing
             },
             stepNames);
     }
@@ -41,7 +41,7 @@ public class FakeJavaModServiceTests
 
         await service.RepairAsync(progress);
 
-        var downloadReports = progress.Reports.Where(r => r.StepName == "Téléchargement du mod Java").ToList();
+        var downloadReports = progress.Reports.Where(r => r.StepName == RepairStepNames.DownloadingJavaMod).ToList();
         Assert.NotEmpty(downloadReports);
         Assert.All(downloadReports, r =>
         {
@@ -58,7 +58,7 @@ public class FakeJavaModServiceTests
 
         await service.RepairAsync(progress);
 
-        var otherReports = progress.Reports.Where(r => r.StepName != "Téléchargement du mod Java");
+        var otherReports = progress.Reports.Where(r => r.StepName != RepairStepNames.DownloadingJavaMod);
         Assert.All(otherReports, r =>
         {
             Assert.Null(r.MegabytesDownloaded);
