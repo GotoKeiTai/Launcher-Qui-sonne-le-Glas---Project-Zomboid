@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
@@ -30,7 +31,7 @@ public partial class App : Application
             var mainWindowViewModel = Services.GetRequiredService<MainWindowViewModel>();
 
             var firstRunStore = Services.GetRequiredService<IFirstRunStore>();
-            var hasCompletedFirstRun = firstRunStore.HasCompletedFirstRunAsync().GetAwaiter().GetResult();
+            var hasCompletedFirstRun = Task.Run(() => firstRunStore.HasCompletedFirstRunAsync()).GetAwaiter().GetResult();
             if (!hasCompletedFirstRun)
             {
                 mainWindowViewModel.ShowFirstRun();
@@ -62,10 +63,10 @@ public partial class App : Application
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();
         services.AddSingleton<IFirstRunStore>(_ => FirstRunStore.CreateDefault());
 
-        services.AddTransient<DashboardViewModel>();
-        services.AddTransient<SettingsViewModel>();
-        services.AddTransient<NewsViewModel>();
-        services.AddTransient<FirstRunViewModel>();
-        services.AddTransient<MainWindowViewModel>();
+        services.AddSingleton<DashboardViewModel>();
+        services.AddSingleton<SettingsViewModel>();
+        services.AddSingleton<NewsViewModel>();
+        services.AddSingleton<FirstRunViewModel>();
+        services.AddSingleton<MainWindowViewModel>();
     }
 }
