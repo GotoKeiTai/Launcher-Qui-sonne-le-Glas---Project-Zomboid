@@ -1,0 +1,43 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:GlasLauncher.App.ViewModels"
+        x:Class="GlasLauncher.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Glas Launcher"
+        Width="1200" Height="760"
+        CanResize="False"
+        SystemDecorations="None"
+        Background="{StaticResource BgDeepBrush}">
+
+  <Panel>
+
+    <!-- Custom titlebar + current page -->
+    <DockPanel>
+      <Border DockPanel.Dock="Top" Height="44" Background="{StaticResource BgPanelBrush}"
+              BorderBrush="{StaticResource LineSoftBrush}" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="*,Auto" Margin="16,0,10,0">
+          <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="24" Height="19.6" />
+            <TextBlock Text="GLAS LAUNCHER" VerticalAlignment="Center"
+                       FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
+                       FontSize="12.5" Foreground="{StaticResource GoldBrush}" />
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+            <Button Content="–" Width="34" Height="30" Background="Transparent" />
+            <Button Content="✕" Width="34" Height="30" Background="Transparent" />
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <ContentControl Content="{Binding CurrentPage}" />
+    </DockPanel>
+
+    <!-- Modal overlay -->
+    <Panel IsVisible="{Binding CurrentModal, Converter={x:Static ObjectConverters.IsNotNull}}"
+           Background="#B8040906">
+      <ContentControl Content="{Binding CurrentModal}"
+                      HorizontalAlignment="Center" VerticalAlignment="Center" />
+    </Panel>
+
+  </Panel>
+</Window>

@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <FontFamily x:Key="CinzelFont">avares://GlasLauncher.App/Assets/Fonts/Cinzel.ttf#Cinzel</FontFamily>
+  <FontFamily x:Key="BarlowFont">avares://GlasLauncher.App/Assets/Fonts/Barlow-Regular.ttf#Barlow</FontFamily>
+
+</ResourceDictionary>

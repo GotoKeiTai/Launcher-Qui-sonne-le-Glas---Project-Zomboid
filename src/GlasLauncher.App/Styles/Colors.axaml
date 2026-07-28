@@ -1,0 +1,40 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <Color x:Key="BgVoidColor">#070f0a</Color>
+  <Color x:Key="BgDeepColor">#0d1f16</Color>
+  <Color x:Key="BgPanelColor">#12251a</Color>
+  <Color x:Key="BgPanel2Color">#16301f</Color>
+  <Color x:Key="LineColor">#2a4632</Color>
+  <Color x:Key="LineSoftColor">#1e3826</Color>
+  <Color x:Key="GoldColor">#c6a35f</Color>
+  <Color x:Key="GoldBrightColor">#ecd39b</Color>
+  <Color x:Key="GoldDimColor">#8a713f</Color>
+  <Color x:Key="SilverColor">#b7c4c0</Color>
+  <Color x:Key="InkColor">#e9e4d4</Color>
+  <Color x:Key="InkDimColor">#a9b3a8</Color>
+  <Color x:Key="InkFaintColor">#6f7d70</Color>
+  <Color x:Key="OkColor">#5fae7c</Color>
+  <Color x:Key="OkDimColor">#2c4a37</Color>
+  <Color x:Key="WarnColor">#d3a24a</Color>
+  <Color x:Key="WarnDimColor">#4a3a20</Color>
+
+  <SolidColorBrush x:Key="BgVoidBrush" Color="{StaticResource BgVoidColor}" />
+  <SolidColorBrush x:Key="BgDeepBrush" Color="{StaticResource BgDeepColor}" />
+  <SolidColorBrush x:Key="BgPanelBrush" Color="{StaticResource BgPanelColor}" />
+  <SolidColorBrush x:Key="BgPanel2Brush" Color="{StaticResource BgPanel2Color}" />
+  <SolidColorBrush x:Key="LineBrush" Color="{StaticResource LineColor}" />
+  <SolidColorBrush x:Key="LineSoftBrush" Color="{StaticResource LineSoftColor}" />
+  <SolidColorBrush x:Key="GoldBrush" Color="{StaticResource GoldColor}" />
+  <SolidColorBrush x:Key="GoldBrightBrush" Color="{StaticResource GoldBrightColor}" />
+  <SolidColorBrush x:Key="GoldDimBrush" Color="{StaticResource GoldDimColor}" />
+  <SolidColorBrush x:Key="SilverBrush" Color="{StaticResource SilverColor}" />
+  <SolidColorBrush x:Key="InkBrush" Color="{StaticResource InkColor}" />
+  <SolidColorBrush x:Key="InkDimBrush" Color="{StaticResource InkDimColor}" />
+  <SolidColorBrush x:Key="InkFaintBrush" Color="{StaticResource InkFaintColor}" />
+  <SolidColorBrush x:Key="OkBrush" Color="{StaticResource OkColor}" />
+  <SolidColorBrush x:Key="OkDimBrush" Color="{StaticResource OkDimColor}" />
+  <SolidColorBrush x:Key="WarnBrush" Color="{StaticResource WarnColor}" />
+  <SolidColorBrush x:Key="WarnDimBrush" Color="{StaticResource WarnDimColor}" />
+
+</ResourceDictionary>
