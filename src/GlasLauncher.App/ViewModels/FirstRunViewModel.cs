@@ -59,6 +59,11 @@ public partial class FirstRunViewModel : ViewModelBase
         catch (Exception ex)
         {
             StatusMessage = "Erreur lors de la préparation : " + ex.Message;
+            // Give the user a moment to actually see the message before navigating away —
+            // Completed always fires (see finally) so we never get stuck here, but without
+            // this delay the error would be set and immediately replaced by the Dashboard
+            // in the same dispatcher turn, making the message unreachable in practice.
+            await Task.Delay(2500);
         }
         finally
         {

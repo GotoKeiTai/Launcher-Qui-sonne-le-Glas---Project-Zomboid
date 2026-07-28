@@ -23,6 +23,9 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     private string? _statusMessage;
 
+    [ObservableProperty]
+    private bool _isStatusSuccess;
+
     [RelayCommand]
     private async Task BrowseAsync()
     {
@@ -48,14 +51,23 @@ public partial class SettingsViewModel : ViewModelBase
     private void GenerateDiagnosticReport()
     {
         StatusMessage = "Rapport généré (simulation).";
+        IsStatusSuccess = true;
     }
 
     [RelayCommand]
     private void OpenLauncherLogs()
     {
-        var path = GetLauncherLogsPath();
-        Directory.CreateDirectory(path);
-        Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        try
+        {
+            var path = GetLauncherLogsPath();
+            Directory.CreateDirectory(path);
+            Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Impossible d'ouvrir le dossier de logs : " + ex.Message;
+            IsStatusSuccess = false;
+        }
     }
 
     [RelayCommand]
@@ -65,6 +77,7 @@ public partial class SettingsViewModel : ViewModelBase
         if (!Directory.Exists(path))
         {
             StatusMessage = "Dossier de logs Project Zomboid introuvable — le jeu n'a peut-être pas encore été lancé.";
+            IsStatusSuccess = false;
             return;
         }
 
@@ -74,7 +87,15 @@ public partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private void JoinDiscord()
     {
-        Process.Start(new ProcessStartInfo(DiscordInviteUrl) { UseShellExecute = true });
+        try
+        {
+            Process.Start(new ProcessStartInfo(DiscordInviteUrl) { UseShellExecute = true });
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Impossible d'ouvrir Discord : " + ex.Message;
+            IsStatusSuccess = false;
+        }
     }
 
     [RelayCommand]
@@ -88,6 +109,7 @@ public partial class SettingsViewModel : ViewModelBase
 
         await clipboard.SetTextAsync("Launcher v0.1.0 · Project Zomboid 41.78.16 · Mod Java v1.0.0");
         StatusMessage = "Copié dans le presse-papiers.";
+        IsStatusSuccess = true;
     }
 
     [RelayCommand]

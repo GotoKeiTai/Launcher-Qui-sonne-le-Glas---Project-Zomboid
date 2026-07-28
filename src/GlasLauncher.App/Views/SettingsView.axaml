@@ -1,8 +1,13 @@
 <UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="using:GlasLauncher.App.ViewModels"
+             xmlns:conv="using:GlasLauncher.App.Converters"
              x:Class="GlasLauncher.App.Views.SettingsView"
              x:DataType="vm:SettingsViewModel">
+
+  <UserControl.Resources>
+    <conv:BoolToStatusBrushConverter x:Key="BoolToStatusBrushConverter" />
+  </UserControl.Resources>
 
   <Grid RowDefinitions="Auto,*" Background="{StaticResource BgDeepBrush}">
 
@@ -110,7 +115,9 @@
                       HorizontalContentAlignment="Center" VerticalContentAlignment="Center" />
             </Grid>
 
-            <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource OkBrush}" FontSize="12"
+            <TextBlock Text="{Binding StatusMessage}"
+                       Foreground="{Binding IsStatusSuccess, Converter={StaticResource BoolToStatusBrushConverter}}"
+                       FontSize="12"
                        IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
           </StackPanel>
         </Border>
