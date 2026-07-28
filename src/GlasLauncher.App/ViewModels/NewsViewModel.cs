@@ -30,6 +30,9 @@ public partial class NewsViewModel : ViewModelBase
     [ObservableProperty]
     private bool _isChangelogTabActive;
 
+    [ObservableProperty]
+    private string? _statusMessage;
+
     public ObservableCollection<NewsItem> NewsItems { get; }
 
     public ObservableCollection<ChangelogEntry> ChangelogEntries { get; }
@@ -53,14 +56,21 @@ public partial class NewsViewModel : ViewModelBase
 
     private async Task LoadAsync()
     {
-        foreach (var item in await _serverInfoService.GetNewsAsync())
+        try
         {
-            NewsItems.Add(item);
-        }
+            foreach (var item in await _serverInfoService.GetNewsAsync())
+            {
+                NewsItems.Add(item);
+            }
 
-        foreach (var entry in await _serverInfoService.GetChangelogAsync())
+            foreach (var entry in await _serverInfoService.GetChangelogAsync())
+            {
+                ChangelogEntries.Add(entry);
+            }
+        }
+        catch (Exception ex)
         {
-            ChangelogEntries.Add(entry);
+            StatusMessage = "Erreur lors du chargement : " + ex.Message;
         }
     }
 }

@@ -38,6 +38,9 @@
     <ScrollViewer Grid.Row="1" Margin="34,20,34,20">
       <StackPanel Spacing="14" MaxWidth="900" HorizontalAlignment="Left">
 
+        <TextBlock Text="{Binding StatusMessage}" Foreground="{StaticResource WarnBrush}" FontSize="12"
+                   IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
+
         <ItemsControl ItemsSource="{Binding NewsItems}" IsVisible="{Binding IsNewsTabActive}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
