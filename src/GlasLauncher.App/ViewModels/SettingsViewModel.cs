@@ -61,7 +61,14 @@ public partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private void OpenPzLogs()
     {
-        Process.Start(new ProcessStartInfo(GetPzLogsPath()) { UseShellExecute = true });
+        var path = GetPzLogsPath();
+        if (!Directory.Exists(path))
+        {
+            StatusMessage = "Dossier de logs Project Zomboid introuvable — le jeu n'a peut-être pas encore été lancé.";
+            return;
+        }
+
+        Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
     }
 
     [RelayCommand]
