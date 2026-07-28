@@ -16,7 +16,7 @@
       <Grid ColumnDefinitions="Auto,*">
         <Button Grid.Column="0" Content="← Retour" Command="{Binding BackCommand}"
                 Background="Transparent" BorderBrush="{StaticResource LineBrush}" BorderThickness="1"
-                Padding="16,8" VerticalAlignment="Top" />
+                Padding="16,8" VerticalAlignment="Center" />
         <StackPanel Grid.Column="1" Margin="24,0,0,0" VerticalAlignment="Center">
           <TextBlock Text="GLAS LAUNCHER" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
           <TextBlock Text="ACTUALITÉS" FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="28"
@@ -24,7 +24,7 @@
         </StackPanel>
       </Grid>
 
-      <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,22,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,22,0,0" HorizontalAlignment="Center">
         <Button Content="Actualités" Command="{Binding ShowNewsTabCommand}"
                 Background="{Binding IsNewsTabActive, Converter={StaticResource BoolToTabBackgroundConverter}}"
                 Foreground="{StaticResource InkBrush}" Padding="18,8" />
