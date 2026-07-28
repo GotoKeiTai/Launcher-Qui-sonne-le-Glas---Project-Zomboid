@@ -41,10 +41,10 @@
         <ItemsControl ItemsSource="{Binding UpdateInfo.ChangelogEntries}">
           <ItemsControl.ItemTemplate>
             <DataTemplate x:DataType="x:String">
-              <StackPanel Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-                <TextBlock Text="–" Foreground="{StaticResource GoldDimBrush}" FontSize="13" />
-                <TextBlock Text="{Binding}" Foreground="{StaticResource InkBrush}" FontSize="13" TextWrapping="Wrap" />
-              </StackPanel>
+              <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                <TextBlock Text="–" Foreground="{StaticResource GoldDimBrush}" FontSize="13" Margin="0,0,10,0" />
+                <TextBlock Grid.Column="1" Text="{Binding}" Foreground="{StaticResource InkBrush}" FontSize="13" TextWrapping="Wrap" />
+              </Grid>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
@@ -55,16 +55,16 @@
                  FontSize="12" TextWrapping="Wrap" TextAlignment="Center"
                  IsVisible="{Binding StatusMessage, Converter={x:Static ObjectConverters.IsNotNull}}" />
 
-      <Grid ColumnDefinitions="*,*" Margin="0,24,0,0">
-        <Button Grid.Column="0" Content="Plus tard" Command="{Binding DismissCommand}"
-                IsEnabled="{Binding !IsApplying}" Margin="0,0,6,0"
-                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,14" />
-        <Button Grid.Column="1" Content="METTRE À JOUR" Command="{Binding ApplyCommand}"
-                IsEnabled="{Binding !IsApplying}" Margin="6,0,0,0"
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="12" Margin="0,24,0,0">
+        <Button Content="Plus tard" Command="{Binding DismissCommand}"
+                IsEnabled="{Binding !IsApplying}" MinWidth="148"
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="32,14" />
+        <Button Content="METTRE À JOUR" Command="{Binding ApplyCommand}"
+                IsEnabled="{Binding !IsApplying}" MinWidth="148"
                 FontFamily="{StaticResource CinzelFont}" FontWeight="Bold"
                 Background="{StaticResource GoldBrush}" Foreground="#231a08"
-                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="0,14" />
-      </Grid>
+                HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Padding="32,14" />
+      </StackPanel>
 
     </StackPanel>
   </Border>
