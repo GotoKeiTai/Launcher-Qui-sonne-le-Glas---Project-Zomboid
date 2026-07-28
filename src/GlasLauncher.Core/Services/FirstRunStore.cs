@@ -11,8 +11,8 @@ public class FirstRunStore : IFirstRunStore
         _filePath = filePath;
     }
 
-    public static FirstRunStore CreateDefault() =>
-        new(Path.Combine(
+    public static IFirstRunStore CreateDefault() =>
+        new FirstRunStore(Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             "GlasLauncher",
             "state.json"));
@@ -24,9 +24,16 @@ public class FirstRunStore : IFirstRunStore
             return false;
         }
 
-        await using var stream = File.OpenRead(_filePath);
-        var state = await JsonSerializer.DeserializeAsync<FirstRunState>(stream);
-        return state?.FirstRunCompleted ?? false;
+        try
+        {
+            await using var stream = File.OpenRead(_filePath);
+            var state = await JsonSerializer.DeserializeAsync<FirstRunState>(stream);
+            return state?.FirstRunCompleted ?? false;
+        }
+        catch (JsonException)
+        {
+            return false;
+        }
     }
 
     public async Task MarkFirstRunCompleteAsync()
@@ -37,8 +44,13 @@ public class FirstRunStore : IFirstRunStore
             Directory.CreateDirectory(directory);
         }
 
-        await using var stream = File.Create(_filePath);
-        await JsonSerializer.SerializeAsync(stream, new FirstRunState(true));
+        var tempPath = _filePath + ".tmp";
+        await using (var stream = File.Create(tempPath))
+        {
+            await JsonSerializer.SerializeAsync(stream, new FirstRunState(true));
+        }
+
+        File.Move(tempPath, _filePath, overwrite: true);
     }
 
     private record FirstRunState(bool FirstRunCompleted);
