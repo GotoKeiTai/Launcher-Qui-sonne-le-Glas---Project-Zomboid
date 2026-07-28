@@ -38,14 +38,16 @@ public partial class UpdateModalViewModel : ViewModelBase
     {
         IsApplying = true;
         StatusMessage = null;
+        IsStatusSuccess = false;
+        var succeeded = false;
 
         try
         {
             await _updateService.ApplyUpdateAsync();
             StatusMessage = "Mise à jour installée — redémarrez le launcher pour l'appliquer.";
             IsStatusSuccess = true;
+            succeeded = true;
             await Task.Delay(1500);
-            Completed?.Invoke();
         }
         catch (Exception ex)
         {
@@ -55,6 +57,13 @@ public partial class UpdateModalViewModel : ViewModelBase
         finally
         {
             IsApplying = false;
+        }
+
+        // Fired after IsApplying is settled (not from inside the try) so a caller whose
+        // Completed handler runs synchronously never observes a stale "still applying" state.
+        if (succeeded)
+        {
+            Completed?.Invoke();
         }
     }
 }
