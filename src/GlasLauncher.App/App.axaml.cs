@@ -41,7 +41,8 @@ public partial class App : Application
         // Real Windows-specific implementations are registered here in a later
         // plan, guarded by OperatingSystem.IsWindows(). Until then, every
         // platform (including macOS during development) uses the fakes.
-        services.AddSingleton<ISteamEnvironment, FakeSteamEnvironment>();
+        services.AddSingleton<FakeSteamEnvironment>();
+        services.AddSingleton<ISteamEnvironment>(sp => sp.GetRequiredService<FakeSteamEnvironment>());
         services.AddSingleton<IJavaModService, FakeJavaModService>();
         services.AddSingleton<IUpdateService, FakeUpdateService>();
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();

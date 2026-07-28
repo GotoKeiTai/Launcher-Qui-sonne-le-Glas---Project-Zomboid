@@ -23,6 +23,10 @@
                        FontSize="12.5" Foreground="{StaticResource GoldBrush}" />
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
+            <Button Content="Scénario : mods manquants"
+                    Command="{Binding ToggleWorkshopScenarioCommand}"
+                    FontSize="10.5" Padding="8,4" Margin="0,0,10,0"
+                    Background="Transparent" Foreground="{StaticResource InkFaintBrush}" />
             <Button Content="–" Width="34" Height="30" Background="Transparent" Click="OnMinimizeClick" />
             <Button Content="✕" Width="34" Height="30" Background="Transparent" Click="OnCloseClick" />
           </StackPanel>
