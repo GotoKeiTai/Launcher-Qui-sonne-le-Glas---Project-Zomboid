@@ -81,6 +81,7 @@
         <TextBlock Text="PROJECT ZOMBOID" HorizontalAlignment="Center"
                     Foreground="{StaticResource SilverBrush}" FontSize="11" />
         <TextBlock Text="POUR QUI SONNE LE GLAS" HorizontalAlignment="Center" Margin="0,22,0,0"
+                    Width="700"
                     FontFamily="{StaticResource CinzelFont}" FontWeight="Bold" FontSize="44"
                     Foreground="{StaticResource GoldBrightBrush}" TextWrapping="Wrap" TextAlignment="Center" />
       </StackPanel>
