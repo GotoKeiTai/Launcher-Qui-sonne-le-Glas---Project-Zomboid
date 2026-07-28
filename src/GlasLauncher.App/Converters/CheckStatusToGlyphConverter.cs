@@ -16,7 +16,7 @@ public class CheckStatusToGlyphConverter : IValueConverter
             return string.Empty;
         }
 
-        return status == CheckStatus.Passed ? "✓" : "✗";
+        return status == CheckStatus.Passed ? "✓" : "!";
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) =>

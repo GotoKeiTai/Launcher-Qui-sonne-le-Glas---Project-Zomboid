@@ -5,19 +5,17 @@ namespace GlasLauncher.Core.Logic;
 
 public static class WorkshopEvaluator
 {
-    private const string CheckName = "Mods Workshop synchronisés";
-
     public static CheckResult Evaluate(WorkshopStatus status)
     {
         var missingCount = status.RequiredIds.Except(status.InstalledIds).Count();
 
         if (missingCount == 0)
         {
-            return new CheckResult(CheckName, CheckStatus.Passed, "Tous les mods requis sont installés.");
+            return new CheckResult("Mods Workshop synchronisés", CheckStatus.Passed, "Tous les mods requis sont installés.");
         }
 
         return new CheckResult(
-            CheckName,
+            "Mods Workshop manquants",
             CheckStatus.Failed,
             $"{missingCount} mod(s) Workshop manquant(s).");
     }
