@@ -17,7 +17,7 @@ public static class WorkshopEvaluator
         return new CheckResult(
             "Mods Workshop manquants",
             CheckStatus.Failed,
-            $"{missingCount} mod(s) Workshop manquant(s).");
+            "Votre collection Workshop n'est pas à jour avec celle du serveur.");
     }
 
     public static string GetCollectionSubscribeUrl(string collectionId) =>

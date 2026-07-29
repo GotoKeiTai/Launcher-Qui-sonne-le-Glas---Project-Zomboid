@@ -20,7 +20,7 @@ public class WorkshopEvaluatorTests
     }
 
     [Fact]
-    public void Evaluate_MissingMods_ReturnsFailedWithCount()
+    public void Evaluate_MissingMods_ReturnsFailedWithoutExposingCount()
     {
         var status = new WorkshopStatus(
             InstalledIds: new[] { "111" },
@@ -30,7 +30,24 @@ public class WorkshopEvaluatorTests
         var result = WorkshopEvaluator.Evaluate(status);
 
         Assert.Equal(CheckStatus.Failed, result.Status);
-        Assert.Contains("2", result.Message);
+        Assert.DoesNotContain("2", result.Message);
+    }
+
+    [Fact]
+    public void Evaluate_AllRequiredModsMissing_ReturnsSameFailedMessageAsPartialMismatch()
+    {
+        var allMissing = WorkshopEvaluator.Evaluate(new WorkshopStatus(
+            InstalledIds: Array.Empty<string>(),
+            RequiredIds: new[] { "111", "222", "333" },
+            CollectionId: "3719763771"));
+
+        var oneMissing = WorkshopEvaluator.Evaluate(new WorkshopStatus(
+            InstalledIds: new[] { "111", "222" },
+            RequiredIds: new[] { "111", "222", "333" },
+            CollectionId: "3719763771"));
+
+        Assert.Equal(CheckStatus.Failed, allMissing.Status);
+        Assert.Equal(oneMissing.Message, allMissing.Message);
     }
 
     [Fact]
