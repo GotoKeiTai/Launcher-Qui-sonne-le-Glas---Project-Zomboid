@@ -35,4 +35,30 @@ public partial class MainWindow : Window
     {
         Close();
     }
+
+    private void OnResizeGripPointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (sender is not Border { Tag: string edgeName } || !e.GetCurrentPoint(this).Properties.IsLeftButtonPressed)
+        {
+            return;
+        }
+
+        var edge = edgeName switch
+        {
+            "North" => WindowEdge.North,
+            "NorthEast" => WindowEdge.NorthEast,
+            "East" => WindowEdge.East,
+            "SouthEast" => WindowEdge.SouthEast,
+            "South" => WindowEdge.South,
+            "SouthWest" => WindowEdge.SouthWest,
+            "West" => WindowEdge.West,
+            "NorthWest" => WindowEdge.NorthWest,
+            _ => (WindowEdge?)null
+        };
+
+        if (edge is not null)
+        {
+            BeginResizeDrag(edge.Value, e);
+        }
+    }
 }

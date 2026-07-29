@@ -4,7 +4,8 @@
         x:Class="GlasLauncher.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Glas Launcher"
-        Width="1200" Height="760"
+        Width="1200" Height="860"
+        MinWidth="960" MinHeight="640"
         CanResize="True"
         SystemDecorations="None"
         Background="{StaticResource BgDeepBrush}">
@@ -24,9 +25,16 @@
                        FontSize="14" Foreground="{StaticResource GoldBrush}" />
           </StackPanel>
           <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="2" VerticalAlignment="Center">
-            <Button Content="–" Width="34" Height="30" Background="Transparent" Click="OnMinimizeClick" />
-            <Button Content="□" Width="34" Height="30" Background="Transparent" Click="OnMaximizeClick" />
-            <Button Content="✕" Width="34" Height="30" Background="Transparent" Click="OnCloseClick" />
+            <Button Width="34" Height="30" Background="Transparent" Click="OnMinimizeClick">
+              <Rectangle Width="10" Height="1.3" Fill="{Binding $parent[Button].Foreground}" />
+            </Button>
+            <Button Width="34" Height="30" Background="Transparent" Click="OnMaximizeClick">
+              <Rectangle Width="10" Height="10" Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.3" />
+            </Button>
+            <Button Width="34" Height="30" Background="Transparent" Click="OnCloseClick">
+              <Path Width="10" Height="10" Stretch="Uniform" Data="M0,0 L10,10 M0,10 L10,0"
+                    Stroke="{Binding $parent[Button].Foreground}" StrokeThickness="1.3" />
+            </Button>
           </StackPanel>
         </Grid>
       </Border>
@@ -40,6 +48,28 @@
       <ContentControl Content="{Binding CurrentModal}"
                       HorizontalAlignment="Center" VerticalAlignment="Center" />
     </Panel>
+
+    <!-- Resize grips: SystemDecorations="None" drops the native resize hit-testing that
+         CanResize normally provides, so the edges/corners are recreated manually here,
+         the same way the titlebar above uses BeginMoveDrag. -->
+    <Grid RowDefinitions="6,*,6" ColumnDefinitions="6,*,6">
+      <Border Grid.Row="0" Grid.Column="0" Background="Transparent" Cursor="TopLeftCorner"
+              Tag="NorthWest" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="0" Grid.Column="1" Background="Transparent" Cursor="SizeNorthSouth"
+              Tag="North" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="0" Grid.Column="2" Background="Transparent" Cursor="TopRightCorner"
+              Tag="NorthEast" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="1" Grid.Column="0" Background="Transparent" Cursor="SizeWestEast"
+              Tag="West" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="1" Grid.Column="2" Background="Transparent" Cursor="SizeWestEast"
+              Tag="East" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="2" Grid.Column="0" Background="Transparent" Cursor="BottomLeftCorner"
+              Tag="SouthWest" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="2" Grid.Column="1" Background="Transparent" Cursor="SizeNorthSouth"
+              Tag="South" PointerPressed="OnResizeGripPointerPressed" />
+      <Border Grid.Row="2" Grid.Column="2" Background="Transparent" Cursor="BottomRightCorner"
+              Tag="SouthEast" PointerPressed="OnResizeGripPointerPressed" />
+    </Grid>
 
   </Panel>
 </Window>
