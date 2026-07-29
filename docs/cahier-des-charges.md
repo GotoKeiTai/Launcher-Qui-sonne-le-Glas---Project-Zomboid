@@ -58,18 +58,15 @@ Le launcher **vérifie obligatoirement** la conformité Workshop, sans appel ré
 
 ### 4.2 Mod Java (composant serveur)
 
-Le serveur utilise un mod Java propriétaire, non distribuable via le Workshop (ses fichiers doivent être installés directement dans le dossier du jeu). Project Zomboid tourne sur une JVM ; les mods Java ne sont jamais chargés automatiquement et nécessitent un hook au niveau du classpath.
+Le serveur utilise un mod Java propriétaire (mod VOIP `GlasVoipMod`), non distribuable via le Workshop (ses fichiers doivent être installés directement dans le dossier du jeu). Project Zomboid tourne sur une JVM ; les mods Java ne sont jamais chargés automatiquement et nécessitent un hook au niveau du classpath.
 
-**Mécanisme retenu** : un agent Java (type [ZombieBuddy](https://github.com/zed-0xff/ZombieBuddy), open source) plutôt qu'un remplacement direct des classes du jeu — une modification de classes vanilla serait écrasée à chaque mise à jour ou vérification d'intégrité Steam.
+**Mécanisme retenu** : un agent Java autonome (`-javaagent:`), chargé au démarrage de la JVM via une option de lancement Steam du jeu — pas un remplacement direct des classes du jeu (qui serait écrasé à chaque mise à jour ou vérification d'intégrité Steam), et pas un portage vers [ZombieBuddy](https://github.com/zed-0xff/ZombieBuddy) (piste explorée puis abandonnée : le point d'injection réel dans `VoiceManager.UpdateVMClient()` est une variable locale de boucle, hors de portée de l'API `@Patch` de ZombieBuddy sans réécrire la méthode entière — voir `docs/superpowers/specs/2026-07-30-java-mod-launch-option-correction.md`).
 
-- `ZombieBuddy.jar` + `zbNative.dll` sont déposés dans le dossier d'installation du jeu (hors Workshop).
-- Le chargement se fait via l'option de lancement `-agentlib:zbNative --`, configurée dans les **options de lancement Steam** du jeu (stockées dans `localconfig.vdf`) — et non dans un fichier livré avec le jeu, pour survivre à "Vérifier l'intégrité des fichiers du jeu".
-- L'agent étend dynamiquement le classpath (`Instrumentation.appendToSystemClassLoaderSearch`) pour charger `GlasJavaMod.jar` sans modifier aucune classe vanilla.
-- `zbNative.dll` détecte lui-même les jars obsolètes et les remplace avant chargement, ce qui rend l'installation résiliente aux mises à jour du jeu.
+- Le(s) fichier(s) du mod (jar) sont déposés dans le dossier d'installation du jeu (hors Workshop) ; leur liste et leurs SHA-256 attendus proviennent d'un manifeste distant (`JavaModManifest`).
+- Le chargement se fait via une ou plusieurs options de lancement Steam (`-javaagent:<nom-du-jar>`), configurées dans les **options de lancement Steam** du jeu (stockées dans `localconfig.vdf`) — et non dans un fichier livré avec le jeu, pour survivre à "Vérifier l'intégrité des fichiers du jeu". La liste des options requises est elle aussi pilotée par le manifeste distant (`JavaModManifest.RequiredLaunchOptions`), pas codée en dur dans le launcher — ce qui permettrait par exemple la coexistence avec un futur agent tiers si un jour nécessaire, sans changement de code côté launcher.
+- L'agent étend le classpath via l'API standard `java.lang.instrument` (`Instrumentation.appendToSystemClassLoaderSearch`) pour patcher son point d'injection sans modifier aucune classe vanilla.
 
-**Configuration de l'option de lancement** : transmise au joueur lors du passage obligatoire par Discord/ticket pour la whitelist (copier-coller unique, en une fois). Le launcher lit `localconfig.vdf` en lecture seule pour vérifier que l'option est présente et affiche l'instruction si elle manque — il ne l'écrit jamais automatiquement, pour ne pas risquer de corrompre un fichier Steam partagé entre tous les jeux du compte.
-
-**Auto-réparation** : le launcher détecte un mod Java manquant, corrompu, en mauvaise version ou supprimé accidentellement, et retélécharge automatiquement la bonne version (vérification SHA-256 avant installation).
+**Configuration de l'option de lancement** : transmise au joueur lors du passage obligatoire par Discord/ticket pour la whitelist (copier-coller unique, en une fois — le launcher affiche l'option exacte, copiable, si elle manque). Le launcher lit `localconfig.vdf` en lecture seule pour vérifier que l'option est présente et affiche l'instruction si elle manque — il ne l'écrit jamais automatiquement, pour ne pas risquer de corrompre un fichier Steam partagé entre tous les jeux du compte.
 
 ---
 

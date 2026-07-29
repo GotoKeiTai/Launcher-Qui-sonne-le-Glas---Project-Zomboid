@@ -33,22 +33,21 @@ public record JavaModInfo(bool LaunchOptionConfigured, IReadOnlyList<string> Req
 
 `IsLaunchOptionConfigured(string steamPath, string appId, string requiredOption)` devient `AreLaunchOptionsConfigured(string steamPath, string appId, IReadOnlyList<string> requiredOptions)` : lit `LaunchOptions` une seule fois, vérifie que **chaque** option de la liste y est présente (`.Contains()` par option, ordre indifférent dans la chaîne). Liste vide → `true` (rien à vérifier ; ne devrait plus se produire une fois `SteamEnvironment` en place avec son repli, mais garde la fonction pure sûre indépendamment de l'appelant). Même comportement défensif qu'aujourd'hui sur toute erreur de lecture/parsing (dégrade vers `false`, jamais d'exception).
 
-### `ISteamEnvironment` / `SteamEnvironment` — repli hybride
+### `ISteamEnvironment` / `SteamEnvironment` — pur pass-through ; `JavaModService` possède le repli hybride
 
 ```csharp
 Task<bool> IsJavaAgentLaunchOptionConfiguredAsync(IReadOnlyList<string> requiredOptions);
 ```
 
-`SteamEnvironment` garde une constante `DefaultRequiredLaunchOption` (placeholder mod VOIP, remplace l'actuelle `RequiredLaunchOption`). Implémentation :
+`SteamEnvironment` ne fait plus aucun repli lui-même — il vérifie exactement la liste qu'on lui donne :
 
 ```csharp
-public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync(IReadOnlyList<string> requiredOptions)
-{
-    var effective = requiredOptions.Count > 0 ? requiredOptions : new[] { DefaultRequiredLaunchOption };
-    return Task.FromResult(_steamPath is not null
-        && SteamLaunchOptionInspector.AreLaunchOptionsConfigured(_steamPath, AppId, effective));
-}
+public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync(IReadOnlyList<string> requiredOptions) =>
+    Task.FromResult(_steamPath is not null
+        && SteamLaunchOptionInspector.AreLaunchOptionsConfigured(_steamPath, AppId, requiredOptions));
 ```
+
+La constante `DefaultRequiredLaunchOption` (placeholder mod VOIP) vit dans `JavaModService`, pas ici — décision prise après un premier passage où le repli vivait dans `SteamEnvironment` mais que `JavaModService` calculait séparément une liste vide pour l'affichage quand le manifeste est indisponible, ce qui produisait un message vide au joueur (repéré en review finale, corrigé avant fusion). `JavaModService` calcule la liste effective **une seule fois** (manifeste si non vide, sinon le repli) et l'utilise à la fois pour la vérification et pour ce qui est affiché au joueur — voir "Flux de données" ci-dessous et `JavaModService.cs` pour le détail exact.
 
 `FakeSteamEnvironment` reçoit la même signature, retourne toujours `true` (comportement Fake "tout passe" déjà établi, indépendant de la liste passée).
 
@@ -75,7 +74,7 @@ $"lancement du jeu (Steam > clic droit sur Project Zomboid > Propriétés) :\n{s
 
 ## Flux de données
 
-**Aujourd'hui (sans hébergement réel)** : manifeste `null` → `requiredOptions = []` → `SteamEnvironment` retombe sur `DefaultRequiredLaunchOption` (placeholder mod VOIP) → check reste observable exactement comme avant la régression identifiée, mais avec la bonne valeur cette fois. Le message affiché au joueur montre ce placeholder.
+**Aujourd'hui (sans hébergement réel)** : manifeste `null` → `JavaModService` retombe sur `DefaultRequiredLaunchOption` (placeholder mod VOIP) → check reste observable exactement comme avant la régression identifiée, mais avec la bonne valeur cette fois. Le message affiché au joueur montre ce même placeholder, puisque check et affichage utilisent maintenant la même liste calculée une seule fois.
 
 **Une fois l'hébergement du manifeste en place** : `RequiredLaunchOptions` vient du JSON distant → prend le dessus automatiquement sur le défaut codé en dur, sans nouveau changement de code C#. Si un futur mod exige plusieurs options simultanément (ex. VOIP + ZombieBuddy), il suffit de lister les deux dans le manifeste.
 

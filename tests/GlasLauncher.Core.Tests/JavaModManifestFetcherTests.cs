@@ -36,6 +36,28 @@ public class JavaModManifestFetcherTests
     }
 
     [Fact]
+    public async Task FetchAsync_ValidJsonWithRequiredLaunchOptions_ReturnsManifestWithOptions()
+    {
+        const string json = """
+            {
+                "files": [],
+                "requiredLaunchOptions": ["-javaagent:GlasVoipMod.jar"]
+            }
+            """;
+        var httpClient = new HttpClient(new StubHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        }));
+        var fetcher = new JavaModManifestFetcher(httpClient);
+
+        var manifest = await fetcher.FetchAsync();
+
+        Assert.NotNull(manifest);
+        Assert.Single(manifest!.RequiredLaunchOptions);
+        Assert.Equal("-javaagent:GlasVoipMod.jar", manifest.RequiredLaunchOptions[0]);
+    }
+
+    [Fact]
     public async Task FetchAsync_ValidJsonWithoutFilesKey_ReturnsManifestWithEmptyFiles()
     {
         const string json = "{}";
