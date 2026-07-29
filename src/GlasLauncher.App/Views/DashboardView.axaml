@@ -82,8 +82,8 @@
                     </Border>
                     <StackPanel Grid.Column="1" Spacing="2" Margin="10,0,0,0">
                       <TextBlock Text="{Binding Name}" Foreground="{StaticResource InkDimBrush}" FontSize="13" />
-                      <TextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
-                                 FontSize="11" TextWrapping="Wrap" IsVisible="{Binding ShowMessageBelow}" />
+                      <SelectableTextBlock Text="{Binding Message}" Foreground="{StaticResource InkFaintBrush}"
+                                           FontSize="11" TextWrapping="Wrap" IsVisible="{Binding ShowMessageBelow}" />
                     </StackPanel>
                     <TextBlock Grid.Column="2" Text="{Binding InlineValue}" Foreground="{StaticResource InkDimBrush}"
                                FontSize="12" VerticalAlignment="Top"
@@ -165,9 +165,9 @@
       <Grid Grid.Row="1" ColumnDefinitions="*,Auto" Margin="34,0,34,22">
         <StackPanel VerticalAlignment="Center" Spacing="3" Margin="0,0,20,0">
           <TextBlock Text="STATUT" Foreground="{StaticResource InkFaintBrush}" FontSize="10.5" />
-          <TextBlock Text="{Binding StatusMessage}"
-                     Foreground="{Binding CanPlay, Converter={StaticResource BoolToStatusBrushConverter}}"
-                     FontSize="13" TextWrapping="Wrap" FontWeight="SemiBold" />
+          <SelectableTextBlock Text="{Binding StatusMessage}"
+                               Foreground="{Binding CanPlay, Converter={StaticResource BoolToStatusBrushConverter}}"
+                               FontSize="13" TextWrapping="Wrap" FontWeight="SemiBold" />
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
           <Button Content="Paramètres" MinWidth="148" Padding="32,14"

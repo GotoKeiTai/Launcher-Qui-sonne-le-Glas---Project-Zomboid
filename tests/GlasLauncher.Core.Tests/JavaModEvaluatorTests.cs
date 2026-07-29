@@ -48,7 +48,7 @@ public class JavaModEvaluatorTests
         var result = JavaModEvaluator.Evaluate(info);
 
         Assert.Equal(CheckStatus.Failed, result.Status);
-        Assert.Equal("Option de lancement Steam manquante pour l'agent Java.", result.Message);
+        Assert.Contains("-agentlib:zbNative --", result.Message);
     }
 
     [Fact]
