@@ -9,16 +9,16 @@ public class SteamLaunchOptionInspectorTests
     private const string SteamId64 = "76561197960265729";
     private const string AccountId = "1";
     private const string AppId = "108600";
-    private const string RequiredOption = "-agentlib:zbNative --";
+    private static readonly string[] RequiredOptions = { "-agentlib:zbNative --" };
 
     [Fact]
-    public void IsLaunchOptionConfigured_OptionPresent_ReturnsTrue()
+    public void AreLaunchOptionsConfigured_OptionPresent_ReturnsTrue()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
         WriteLocalConfig(steamPath, AccountId, AppId, "-agentlib:zbNative --");
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.True(result);
 
@@ -26,13 +26,13 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_OptionPresentAmongOthers_ReturnsTrue()
+    public void AreLaunchOptionsConfigured_OptionPresentAmongOthers_ReturnsTrue()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
         WriteLocalConfig(steamPath, AccountId, AppId, "-high -agentlib:zbNative --");
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.True(result);
 
@@ -40,13 +40,13 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_OptionAbsent_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_OptionAbsent_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
         WriteLocalConfig(steamPath, AccountId, AppId, "-high");
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
 
@@ -54,13 +54,13 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_AppEntryMissing_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_AppEntryMissing_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
         WriteLocalConfig(steamPath, AccountId, AppId, launchOptions: null);
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
 
@@ -68,12 +68,12 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_LoginUsersVdfMissing_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_LoginUsersVdfMissing_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         Directory.CreateDirectory(steamPath);
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
 
@@ -81,13 +81,13 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_NoMostRecentAccount_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_NoMostRecentAccount_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: false);
         WriteLocalConfig(steamPath, AccountId, AppId, "-agentlib:zbNative --");
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
 
@@ -95,12 +95,12 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_LocalConfigVdfMissing_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_LocalConfigVdfMissing_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
 
@@ -108,15 +108,59 @@ public class SteamLaunchOptionInspectorTests
     }
 
     [Fact]
-    public void IsLaunchOptionConfigured_CorruptedLoginUsersVdf_ReturnsFalse()
+    public void AreLaunchOptionsConfigured_CorruptedLoginUsersVdf_ReturnsFalse()
     {
         var steamPath = CreateTempDir();
         Directory.CreateDirectory(Path.Combine(steamPath, "config"));
         File.WriteAllText(Path.Combine(steamPath, "config", "loginusers.vdf"), "{not valid vdf");
 
-        var result = SteamLaunchOptionInspector.IsLaunchOptionConfigured(steamPath, AppId, RequiredOption);
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, RequiredOptions);
 
         Assert.False(result);
+
+        Directory.Delete(steamPath, recursive: true);
+    }
+
+    [Fact]
+    public void AreLaunchOptionsConfigured_MultipleOptionsAllPresent_ReturnsTrue()
+    {
+        var steamPath = CreateTempDir();
+        WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
+        WriteLocalConfig(steamPath, AccountId, AppId, "-javaagent:GlasVoipMod.jar -agentlib:zbNative --");
+
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(
+            steamPath, AppId, new[] { "-javaagent:GlasVoipMod.jar", "-agentlib:zbNative --" });
+
+        Assert.True(result);
+
+        Directory.Delete(steamPath, recursive: true);
+    }
+
+    [Fact]
+    public void AreLaunchOptionsConfigured_OneOfMultipleOptionsMissing_ReturnsFalse()
+    {
+        var steamPath = CreateTempDir();
+        WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
+        WriteLocalConfig(steamPath, AccountId, AppId, "-javaagent:GlasVoipMod.jar");
+
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(
+            steamPath, AppId, new[] { "-javaagent:GlasVoipMod.jar", "-agentlib:zbNative --" });
+
+        Assert.False(result);
+
+        Directory.Delete(steamPath, recursive: true);
+    }
+
+    [Fact]
+    public void AreLaunchOptionsConfigured_EmptyRequiredList_ReturnsTrue()
+    {
+        var steamPath = CreateTempDir();
+        WriteLoginUsers(steamPath, SteamId64, mostRecent: true);
+        WriteLocalConfig(steamPath, AccountId, AppId, "-high");
+
+        var result = SteamLaunchOptionInspector.AreLaunchOptionsConfigured(steamPath, AppId, Array.Empty<string>());
+
+        Assert.True(result);
 
         Directory.Delete(steamPath, recursive: true);
     }

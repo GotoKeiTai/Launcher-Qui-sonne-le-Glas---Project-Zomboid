@@ -27,5 +27,5 @@ public class FakeSteamEnvironment : ISteamEnvironment
     public Task<string?> GetGameInstallPathAsync() =>
         Task.FromResult<string?>("/fake/steam/library/steamapps/common/ProjectZomboid");
 
-    public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync() => Task.FromResult(true);
+    public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync(IReadOnlyList<string> requiredOptions) => Task.FromResult(true);
 }

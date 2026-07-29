@@ -7,6 +7,7 @@ public class FakeJavaModService : IJavaModService
     public Task<JavaModInfo> GetStatusAsync() =>
         Task.FromResult(new JavaModInfo(
             LaunchOptionConfigured: true,
+            RequiredLaunchOptions: new[] { "-javaagent:GlasVoipMod.jar" },
             Files: new List<JavaFileStatus>
             {
                 new("GlasVoipMod.jar", InstalledVersion: "0.1.0", RequiredVersion: "0.1.0", IsUpToDate: true)

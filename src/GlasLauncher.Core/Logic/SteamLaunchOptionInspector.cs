@@ -7,7 +7,7 @@ public static class SteamLaunchOptionInspector
 {
     private const ulong AccountIdOffset = 76561197960265728;
 
-    public static bool IsLaunchOptionConfigured(string steamPath, string appId, string requiredOption)
+    public static bool AreLaunchOptionsConfigured(string steamPath, string appId, IReadOnlyList<string> requiredOptions)
     {
         var accountId = FindMostRecentAccountId(steamPath);
         if (accountId is null)
@@ -17,7 +17,7 @@ public static class SteamLaunchOptionInspector
 
         var localConfigPath = Path.Combine(steamPath, "userdata", accountId, "config", "localconfig.vdf");
         var launchOptions = ReadLaunchOptions(localConfigPath, appId);
-        return launchOptions is not null && launchOptions.Contains(requiredOption);
+        return launchOptions is not null && requiredOptions.All(launchOptions.Contains);
     }
 
     private static string? FindMostRecentAccountId(string steamPath)

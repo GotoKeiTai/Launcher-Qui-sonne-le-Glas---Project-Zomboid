@@ -17,10 +17,12 @@ public class JavaFileInspectorTests
         Directory.CreateDirectory(installPath);
         File.WriteAllText(Path.Combine(installPath, "GlasVoipMod.jar"), MatchingContent);
 
-        var manifest = new JavaModManifest(new[]
-        {
-            new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
-        });
+        var manifest = new JavaModManifest(
+            new[]
+            {
+                new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
+            },
+            Array.Empty<string>());
 
         var result = JavaFileInspector.GetFileStatuses(installPath, manifest);
 
@@ -39,10 +41,12 @@ public class JavaFileInspectorTests
         var installPath = CreateTempDir();
         Directory.CreateDirectory(installPath);
 
-        var manifest = new JavaModManifest(new[]
-        {
-            new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
-        });
+        var manifest = new JavaModManifest(
+            new[]
+            {
+                new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
+            },
+            Array.Empty<string>());
 
         var result = JavaFileInspector.GetFileStatuses(installPath, manifest);
 
@@ -60,10 +64,12 @@ public class JavaFileInspectorTests
         Directory.CreateDirectory(installPath);
         File.WriteAllText(Path.Combine(installPath, "GlasVoipMod.jar"), "wrong content");
 
-        var manifest = new JavaModManifest(new[]
-        {
-            new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
-        });
+        var manifest = new JavaModManifest(
+            new[]
+            {
+                new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar")
+            },
+            Array.Empty<string>());
 
         var result = JavaFileInspector.GetFileStatuses(installPath, manifest);
 
@@ -82,11 +88,13 @@ public class JavaFileInspectorTests
         File.WriteAllText(Path.Combine(installPath, "GlasVoipMod.jar"), MatchingContent);
         // ZombieBuddy.jar intentionally left missing.
 
-        var manifest = new JavaModManifest(new[]
-        {
-            new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar"),
-            new JavaFileEntry("ZombieBuddy.jar", "1.0.0", "0000000000000000000000000000000000000000000000000000000000000000", "https://example.com/ZombieBuddy.jar")
-        });
+        var manifest = new JavaModManifest(
+            new[]
+            {
+                new JavaFileEntry("GlasVoipMod.jar", "0.1.0", MatchingSha256, "https://example.com/GlasVoipMod.jar"),
+                new JavaFileEntry("ZombieBuddy.jar", "1.0.0", "0000000000000000000000000000000000000000000000000000000000000000", "https://example.com/ZombieBuddy.jar")
+            },
+            Array.Empty<string>());
 
         var result = JavaFileInspector.GetFileStatuses(installPath, manifest);
 

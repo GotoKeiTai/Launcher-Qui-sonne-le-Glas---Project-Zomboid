@@ -18,27 +18,24 @@ public class JavaModService : IJavaModService
 
     public async Task<JavaModInfo> GetStatusAsync()
     {
-        var launchOptionConfigured = await _steamEnvironment.IsJavaAgentLaunchOptionConfiguredAsync();
-        var installPath = await _steamEnvironment.GetGameInstallPathAsync();
-        if (installPath is null)
-        {
-            return new JavaModInfo(launchOptionConfigured, Array.Empty<JavaFileStatus>());
-        }
-
-        var manifest = await _manifestFetcher.FetchAsync();
-        if (manifest is null)
-        {
-            return new JavaModInfo(launchOptionConfigured, Array.Empty<JavaFileStatus>());
-        }
-
         try
         {
+            var manifest = await _manifestFetcher.FetchAsync();
+            var requiredLaunchOptions = manifest?.RequiredLaunchOptions ?? Array.Empty<string>();
+            var launchOptionConfigured = await _steamEnvironment.IsJavaAgentLaunchOptionConfiguredAsync(requiredLaunchOptions);
+
+            var installPath = await _steamEnvironment.GetGameInstallPathAsync();
+            if (installPath is null || manifest is null)
+            {
+                return new JavaModInfo(launchOptionConfigured, requiredLaunchOptions, Array.Empty<JavaFileStatus>());
+            }
+
             var files = JavaFileInspector.GetFileStatuses(installPath, manifest);
-            return new JavaModInfo(launchOptionConfigured, files);
+            return new JavaModInfo(launchOptionConfigured, requiredLaunchOptions, files);
         }
         catch (Exception)
         {
-            return new JavaModInfo(launchOptionConfigured, Array.Empty<JavaFileStatus>());
+            return new JavaModInfo(false, Array.Empty<string>(), Array.Empty<JavaFileStatus>());
         }
     }
 

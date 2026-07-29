@@ -28,7 +28,13 @@ public class JavaModManifestFetcher
         try
         {
             var manifest = await _httpClient.GetFromJsonAsync<JavaModManifest>(ManifestUrl, SerializerOptions);
-            return manifest is null ? null : manifest with { Files = manifest.Files ?? Array.Empty<JavaFileEntry>() };
+            return manifest is null
+                ? null
+                : manifest with
+                {
+                    Files = manifest.Files ?? Array.Empty<JavaFileEntry>(),
+                    RequiredLaunchOptions = manifest.RequiredLaunchOptions ?? Array.Empty<string>()
+                };
         }
         catch (Exception)
         {

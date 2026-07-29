@@ -9,7 +9,13 @@ namespace GlasLauncher.Core.Services;
 public class SteamEnvironment : ISteamEnvironment
 {
     private const string AppId = "108600";
-    private const string RequiredLaunchOption = "-agentlib:zbNative --";
+
+    // Placeholder — the VOIP mod (GlasVoipMod) has no stable jar name/release yet. Used only
+    // as a fallback when the remote manifest doesn't supply RequiredLaunchOptions (i.e. no real
+    // hosting exists yet, same situation as JavaModManifestFetcher's placeholder URL). Once the
+    // manifest is hosted for real, its RequiredLaunchOptions takes over automatically and this
+    // default is never consulted.
+    private const string DefaultRequiredLaunchOption = "-javaagent:GlasVoipMod.jar";
 
     private readonly string? _steamPath;
     private readonly Lazy<SteamGameLocation?> _location;
@@ -100,7 +106,10 @@ public class SteamEnvironment : ISteamEnvironment
     public Task<string?> GetGameInstallPathAsync() =>
         Task.FromResult(_location.Value?.InstallPath);
 
-    public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync() =>
-        Task.FromResult(_steamPath is not null
-            && SteamLaunchOptionInspector.IsLaunchOptionConfigured(_steamPath, AppId, RequiredLaunchOption));
+    public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync(IReadOnlyList<string> requiredOptions)
+    {
+        var effectiveOptions = requiredOptions.Count > 0 ? requiredOptions : new[] { DefaultRequiredLaunchOption };
+        return Task.FromResult(_steamPath is not null
+            && SteamLaunchOptionInspector.AreLaunchOptionsConfigured(_steamPath, AppId, effectiveOptions));
+    }
 }
