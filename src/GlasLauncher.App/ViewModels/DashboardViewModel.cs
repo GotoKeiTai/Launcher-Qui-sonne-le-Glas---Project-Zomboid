@@ -64,10 +64,17 @@ public partial class DashboardViewModel : ViewModelBase
                 News.Add(item);
             }
 
-            // "Steam détecté" and "Project Zomboid détecté" are placeholders (always Passed) until
-            // the real Windows-specific detection services (registry/VDF lookups) land in a later plan.
-            Checks.Add(new CheckItemViewModel(new CheckResult("Steam détecté", CheckStatus.Passed, "Client Steam actif.")));
-            Checks.Add(new CheckItemViewModel(new CheckResult("Project Zomboid détecté", CheckStatus.Passed, "Installation trouvée.")));
+            var steamInstalled = await _steamEnvironment.IsSteamInstalledAsync();
+            var steamInstalledResult = steamInstalled
+                ? new CheckResult("Steam détecté", CheckStatus.Passed, "Client Steam installé.")
+                : new CheckResult("Steam détecté", CheckStatus.Failed, "Client Steam introuvable. Veuillez installer Steam.");
+            Checks.Add(new CheckItemViewModel(steamInstalledResult));
+
+            var steamRunning = await _steamEnvironment.IsSteamRunningAsync();
+            var steamRunningResult = steamRunning
+                ? new CheckResult("Project Zomboid détecté", CheckStatus.Passed, "Steam est en cours d'exécution.")
+                : new CheckResult("Project Zomboid détecté", CheckStatus.Failed, "Steam n'est pas lancé. Veuillez démarrer Steam.");
+            Checks.Add(new CheckItemViewModel(steamRunningResult));
 
             var versionRequirement = await _serverInfoService.GetGameVersionRequirementAsync();
             var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();

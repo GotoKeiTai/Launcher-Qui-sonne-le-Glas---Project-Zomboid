@@ -44,7 +44,18 @@ public class SteamEnvironment : ISteamEnvironment
     {
         try
         {
-            return Task.FromResult(Process.GetProcessesByName("steam").Length > 0);
+            var processes = Process.GetProcessesByName("steam");
+            try
+            {
+                return Task.FromResult(processes.Length > 0);
+            }
+            finally
+            {
+                foreach (var process in processes)
+                {
+                    process.Dispose();
+                }
+            }
         }
         catch
         {
@@ -74,7 +85,7 @@ public class SteamEnvironment : ISteamEnvironment
     {
         try
         {
-            Process.Start(new ProcessStartInfo($"steam://run/{AppId}") { UseShellExecute = true });
+            using var process = Process.Start(new ProcessStartInfo($"steam://run/{AppId}") { UseShellExecute = true });
         }
         catch
         {
