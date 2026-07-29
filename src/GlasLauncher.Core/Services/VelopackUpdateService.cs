@@ -16,21 +16,20 @@ public class VelopackUpdateService : IUpdateService
         try
         {
             _pendingUpdate = await _manager.CheckForUpdatesAsync();
+            if (_pendingUpdate is null)
+            {
+                return null;
+            }
+
+            return new GlasLauncher.Core.Models.UpdateInfo(
+                CurrentVersion: GetCurrentVersion(),
+                LatestVersion: _pendingUpdate.TargetFullRelease.Version.ToString(),
+                ChangelogEntries: UpdateNotesParser.Parse(_pendingUpdate.TargetFullRelease.NotesMarkdown ?? ""));
         }
         catch (Exception)
         {
             return null;
         }
-
-        if (_pendingUpdate is null)
-        {
-            return null;
-        }
-
-        return new GlasLauncher.Core.Models.UpdateInfo(
-            CurrentVersion: GetCurrentVersion(),
-            LatestVersion: _pendingUpdate.TargetFullRelease.Version.ToString(),
-            ChangelogEntries: UpdateNotesParser.Parse(_pendingUpdate.TargetFullRelease.NotesMarkdown));
     }
 
     public async Task ApplyUpdateAsync()
