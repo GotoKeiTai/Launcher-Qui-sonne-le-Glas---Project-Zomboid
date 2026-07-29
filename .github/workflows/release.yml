@@ -26,7 +26,7 @@ jobs:
         run: dotnet publish src/GlasLauncher.App -c Release -r win-x64 --self-contained -o publish
 
       - name: Install vpk
-        run: dotnet tool install --global vpk
+        run: dotnet tool install --global vpk --version 1.2.0
 
       - name: Extract version and release notes from the tag
         run: |
@@ -39,7 +39,7 @@ jobs:
         continue-on-error: true
 
       - name: Pack
-        run: vpk pack --packId GlasLauncher --packVersion $env:VERSION --packDir publish --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico --releaseNotes release-notes.md
+        run: vpk pack --packId GlasLauncher --packVersion $env:VERSION --packDir publish --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico --releaseNotes release-notes.md --outputDir Releases
 
       - name: Upload to GitHub Releases
         run: vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }} --publish --outputDir Releases --releaseName "Glas Launcher $env:VERSION" --tag ${{ github.ref_name }}

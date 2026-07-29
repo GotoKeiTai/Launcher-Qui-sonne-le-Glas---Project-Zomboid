@@ -23,6 +23,8 @@ public partial class SettingsViewModel : ViewModelBase
         _updateService = updateService;
     }
 
+    public string VersionInfoText => $"Launcher {_updateService.GetCurrentVersion()} · Project Zomboid 41.78.16 · Mod Java v1.0.0";
+
     public event Action? BackRequested;
 
     [ObservableProperty]
@@ -115,7 +117,7 @@ public partial class SettingsViewModel : ViewModelBase
             return;
         }
 
-        await clipboard.SetTextAsync($"Launcher {_updateService.GetCurrentVersion()} · Project Zomboid 41.78.16 · Mod Java v1.0.0");
+        await clipboard.SetTextAsync(VersionInfoText);
         StatusMessage = "Copié dans le presse-papiers.";
         IsStatusSuccess = true;
     }

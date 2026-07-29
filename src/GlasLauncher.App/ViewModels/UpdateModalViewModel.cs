@@ -37,15 +37,21 @@ public partial class UpdateModalViewModel : ViewModelBase
     private async Task ApplyAsync()
     {
         IsApplying = true;
-        StatusMessage = null;
-        IsStatusSuccess = false;
+        // Shown BEFORE the call below, not after: on the real Windows path,
+        // ApplyUpdateAsync() ends by restarting the process (Velopack's
+        // ApplyUpdatesAndRestart), so nothing set after that call is ever
+        // observed by the user — the app just closes and reopens.
+        StatusMessage = "Téléchargement en cours… le launcher va redémarrer automatiquement.";
+        IsStatusSuccess = true;
         var succeeded = false;
 
         try
         {
             await _updateService.ApplyUpdateAsync();
+            // Reached only when ApplyUpdateAsync returns normally instead of restarting
+            // the process — i.e. FakeUpdateService in dev. The real Velopack path exits
+            // during the call above and never comes back here.
             StatusMessage = "Mise à jour installée — redémarrez le launcher pour l'appliquer.";
-            IsStatusSuccess = true;
             succeeded = true;
             await Task.Delay(1500);
         }

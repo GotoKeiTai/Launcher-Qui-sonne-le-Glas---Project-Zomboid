@@ -43,5 +43,15 @@ public class VelopackUpdateService : IUpdateService
         _manager.ApplyUpdatesAndRestart(_pendingUpdate.TargetFullRelease);
     }
 
-    public string GetCurrentVersion() => _manager.CurrentVersion?.ToString() ?? "dev";
+    public string GetCurrentVersion()
+    {
+        try
+        {
+            return _manager.CurrentVersion?.ToString() ?? "dev";
+        }
+        catch (Exception)
+        {
+            return "dev";
+        }
+    }
 }

@@ -22,4 +22,14 @@ public class FakeUpdateServiceTests
 
         await service.ApplyUpdateAsync();
     }
+
+    [Fact]
+    public void GetCurrentVersion_ReturnsDevPlaceholder()
+    {
+        var service = new FakeUpdateService();
+
+        var result = service.GetCurrentVersion();
+
+        Assert.Equal("0.1.0-dev", result);
+    }
 }

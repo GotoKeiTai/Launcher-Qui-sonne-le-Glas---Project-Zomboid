@@ -4,8 +4,9 @@ namespace GlasLauncher.Core.Services.Fakes;
 
 public class FakeUpdateService : IUpdateService
 {
-    // No update available: kept as a no-update fake until a real Velopack-backed
-    // IUpdateService exists (see docs/session-notes.md, sub-project #3).
+    // No update available: this Fake is used on non-Windows platforms only, where
+    // VelopackUpdateService (the real IUpdateService) doesn't run — purely a dev-UI
+    // convenience, not a placeholder awaiting real functionality.
     public Task<UpdateInfo?> CheckForUpdateAsync() => Task.FromResult<UpdateInfo?>(null);
 
     public async Task ApplyUpdateAsync()

@@ -107,7 +107,7 @@
               <StackPanel Spacing="4">
                 <TextBlock Text="Informations de version" Foreground="{StaticResource InkBrush}"
                            FontWeight="SemiBold" FontSize="14" />
-                <TextBlock Text="Launcher v0.1.0 · Project Zomboid 41.78.16 · Mod Java v1.0.0"
+                <TextBlock Text="{Binding VersionInfoText}"
                            Foreground="{StaticResource InkFaintBrush}" FontSize="11.5" />
               </StackPanel>
               <Button Grid.Column="1" Content="Copier" Command="{Binding CopyVersionInfoCommand}"
