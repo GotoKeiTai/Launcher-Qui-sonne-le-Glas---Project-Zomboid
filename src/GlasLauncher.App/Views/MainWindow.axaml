@@ -4,6 +4,7 @@
         x:Class="GlasLauncher.App.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Title="Glas Launcher"
+        Icon="avares://GlasLauncher.App/Assets/shield.ico"
         Width="1200" Height="860"
         MinWidth="960" MinHeight="640"
         CanResize="True"
@@ -19,7 +20,7 @@
               PointerPressed="OnTitleBarPointerPressed">
         <Grid ColumnDefinitions="*,Auto" Margin="16,0,10,0">
           <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-            <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="22" Height="18" />
+            <Image Source="avares://GlasLauncher.App/Assets/shield.png" Width="30" Height="24" VerticalAlignment="Center" />
             <TextBlock Text="Glas Launcher" VerticalAlignment="Center"
                        FontFamily="{StaticResource CinzelFont}"
                        FontSize="14" Foreground="{StaticResource GoldBrush}" />
