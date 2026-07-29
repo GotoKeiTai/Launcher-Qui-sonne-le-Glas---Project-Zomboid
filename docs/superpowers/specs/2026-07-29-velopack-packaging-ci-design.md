@@ -55,16 +55,21 @@ CLI `vpk` (outil dotnet global, `dotnet tool install --global vpk`) :
 # 1. Publier l'app en self-contained win-x64 (aucune dépendance .NET requise côté joueur)
 dotnet publish src/GlasLauncher.App -c Release -r win-x64 --self-contained -o publish
 
-# 2. Empaqueter — packId "GlasLauncher" produit bien GlasLauncherSetup.exe (convention Velopack :
+# 2. Télécharger la release précédente pour permettre un delta (pas d'échec bloquant si aucune
+# release n'existe encore — premier tag du projet)
+vpk download github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid \
+  --token <GITHUB_TOKEN>
+
+# 3. Empaqueter — packId "GlasLauncher" produit bien GlasLauncherSetup.exe (convention Velopack :
 # <packId>Setup.exe), icône réutilisée depuis Tâche 1 du sous-projet précédent
 vpk pack --packId GlasLauncher --packVersion <version> --packDir publish \
   --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico \
   --releaseNotes release-notes.md
 
-# 3. Publier sur GitHub Releases (--publish = publication immédiate, pas de brouillon ;
+# 4. Publier sur GitHub Releases (--publish = publication immédiate, pas de brouillon ;
 # --outputDir doit correspondre à celui produit par `vpk pack`, par défaut "Releases")
 vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid \
-  --token <GITHUB_TOKEN> --publish --outputDir Releases
+  --token <GITHUB_TOKEN> --publish --outputDir Releases --releaseName "Glas Launcher <version>" --tag v<version>
 ```
 
 ## Architecture
@@ -196,9 +201,14 @@ jobs:
           $version = "${{ github.ref_name }}".TrimStart('v')
           "VERSION=$version" >> $env:GITHUB_ENV
           git tag -l --format='%(contents)' ${{ github.ref_name }} > release-notes.md
+      - name: Télécharger la release précédente (requis pour générer les deltas de mise à jour)
+        run: vpk download github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true   # rien à télécharger lors de la toute première release — comportement attendu
       - run: vpk pack --packId GlasLauncher --packVersion $env:VERSION --packDir publish --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico --releaseNotes release-notes.md
-      - run: vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }} --publish --outputDir Releases
+      - run: vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }} --publish --outputDir Releases --releaseName "Glas Launcher $env:VERSION" --tag ${{ github.ref_name }}
 ```
+
+`vpk download` récupère la release précédente pour que `vpk pack` puisse générer une mise à jour **delta** (le joueur ne retélécharge que ce qui a changé) plutôt qu'un paquet complet à chaque fois — omis par erreur dans la première version de cette spec, corrigé après vérification de l'exemple officiel GitHub Actions de Velopack (`docs.velopack.io/distributing/github-actions`). Sans release précédente (premier tag du projet), l'étape échoue silencieusement (`continue-on-error`) et `vpk pack` produit simplement un paquet complet, sans delta — comportement attendu, pas une erreur à corriger.
 
 Le message du tag annoté sert directement de notes de release — une seule action déclenche la release **et** rédige son changelog, plutôt que de maintenir un fichier séparé. C'est aussi directement ce que `VelopackUpdateService.ParseNotesIntoEntries` consomme côté client. Sur PowerShell (shell de dev par défaut), `\n` dans une chaîne entre guillemets n'est **pas** interprété comme un saut de ligne (contrairement à bash) — utiliser plusieurs flags `-m`, chacun devenant une ligne du message :
 
