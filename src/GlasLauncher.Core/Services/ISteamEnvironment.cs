@@ -9,4 +9,6 @@ public interface ISteamEnvironment
     Task<GameVersionInfo?> GetInstalledGameVersionAsync();
     Task<WorkshopStatus> GetWorkshopStatusAsync(IReadOnlyList<string> requiredIds, string collectionId);
     Task LaunchGameAsync();
+    Task<string?> GetGameInstallPathAsync();
+    Task<bool> IsJavaAgentLaunchOptionConfiguredAsync();
 }

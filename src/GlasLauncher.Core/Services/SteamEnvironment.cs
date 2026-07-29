@@ -9,6 +9,7 @@ namespace GlasLauncher.Core.Services;
 public class SteamEnvironment : ISteamEnvironment
 {
     private const string AppId = "108600";
+    private const string RequiredLaunchOption = "-agentlib:zbNative --";
 
     private readonly string? _steamPath;
     private readonly Lazy<SteamGameLocation?> _location;
@@ -95,4 +96,11 @@ public class SteamEnvironment : ISteamEnvironment
 
         return Task.CompletedTask;
     }
+
+    public Task<string?> GetGameInstallPathAsync() =>
+        Task.FromResult(_location.Value?.InstallPath);
+
+    public Task<bool> IsJavaAgentLaunchOptionConfiguredAsync() =>
+        Task.FromResult(_steamPath is not null
+            && SteamLaunchOptionInspector.IsLaunchOptionConfigured(_steamPath, AppId, RequiredLaunchOption));
 }
