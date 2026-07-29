@@ -52,16 +52,15 @@ public partial class App : Application
 
     private static void RegisterServices(ServiceCollection services)
     {
-        // Real Windows-specific implementations are registered here in a later
-        // plan, guarded by OperatingSystem.IsWindows(). Until then, every
-        // platform (including macOS during development) uses the fakes.
-        // MainWindowViewModel depends on the concrete FakeSteamEnvironment (not ISteamEnvironment)
-        // for its dev-only scenario-switcher toggle. When real Windows services are added here,
-        // this registration and MainWindowViewModel's constructor will need to be revisited —
-        // either keep FakeSteamEnvironment registered everywhere (toggle becomes a no-op on
-        // real builds) or give the switcher its own dev-mode gate.
-        services.AddSingleton<FakeSteamEnvironment>();
-        services.AddSingleton<ISteamEnvironment>(sp => sp.GetRequiredService<FakeSteamEnvironment>());
+        // Real Windows-specific implementations land here as each "vrais services
+        // Windows" sub-project ships (docs/session-notes.md). Steam & VDF is the
+        // first: on Windows, SteamEnvironment reads the registry and parses VDF/ACF
+        // files for real. Every other platform (macOS during development) keeps
+        // using FakeSteamEnvironment.
+        services.AddSingleton<ISteamEnvironment>(_ =>
+            OperatingSystem.IsWindows()
+                ? SteamEnvironment.CreateForCurrentUser()
+                : new FakeSteamEnvironment());
         services.AddSingleton<IJavaModService, FakeJavaModService>();
         services.AddSingleton<IUpdateService, FakeUpdateService>();
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();
