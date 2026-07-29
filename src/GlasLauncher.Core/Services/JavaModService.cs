@@ -31,8 +31,15 @@ public class JavaModService : IJavaModService
             return new JavaModInfo(launchOptionConfigured, Array.Empty<JavaFileStatus>());
         }
 
-        var files = JavaFileInspector.GetFileStatuses(installPath, manifest);
-        return new JavaModInfo(launchOptionConfigured, files);
+        try
+        {
+            var files = JavaFileInspector.GetFileStatuses(installPath, manifest);
+            return new JavaModInfo(launchOptionConfigured, files);
+        }
+        catch (Exception)
+        {
+            return new JavaModInfo(launchOptionConfigured, Array.Empty<JavaFileStatus>());
+        }
     }
 
     public async Task RepairAsync(IProgress<RepairProgress> progress)
@@ -49,14 +56,6 @@ public class JavaModService : IJavaModService
             .ToList();
 
         progress.Report(new RepairProgress(RepairStepNames.OldVersionRemoved, 10));
-        foreach (var entry in outdatedEntries)
-        {
-            var path = Path.Combine(installPath, entry.FileName);
-            if (File.Exists(path))
-            {
-                File.Delete(path);
-            }
-        }
 
         progress.Report(new RepairProgress(RepairStepNames.DownloadingJavaMod, 30));
 
