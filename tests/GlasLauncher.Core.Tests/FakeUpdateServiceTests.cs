@@ -6,16 +6,13 @@ namespace GlasLauncher.Core.Tests;
 public class FakeUpdateServiceTests
 {
     [Fact]
-    public async Task CheckForUpdateAsync_ReturnsUpdateInfo_WithChangelogEntries()
+    public async Task CheckForUpdateAsync_ReturnsNull_NoUpdateAvailable()
     {
         var service = new FakeUpdateService();
 
         var result = await service.CheckForUpdateAsync();
 
-        Assert.NotNull(result);
-        Assert.Equal("v0.1.0", result!.CurrentVersion);
-        Assert.Equal("v0.2.0", result.LatestVersion);
-        Assert.NotEmpty(result.ChangelogEntries);
+        Assert.Null(result);
     }
 
     [Fact]
