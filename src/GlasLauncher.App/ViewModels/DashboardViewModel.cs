@@ -15,11 +15,13 @@ public partial class DashboardViewModel : ViewModelBase
 {
     private readonly ISteamEnvironment _steamEnvironment;
     private readonly IServerInfoService _serverInfoService;
+    private readonly IJavaModService _javaModService;
 
-    public DashboardViewModel(ISteamEnvironment steamEnvironment, IServerInfoService serverInfoService)
+    public DashboardViewModel(ISteamEnvironment steamEnvironment, IServerInfoService serverInfoService, IJavaModService javaModService)
     {
         _steamEnvironment = steamEnvironment;
         _serverInfoService = serverInfoService;
+        _javaModService = javaModService;
         Checks = new ObservableCollection<CheckItemViewModel>();
         News = new ObservableCollection<NewsItem>();
 
@@ -84,8 +86,8 @@ public partial class DashboardViewModel : ViewModelBase
                 : GameVersionEvaluator.Evaluate(detectedVersion, versionRequirement);
             Checks.Add(new CheckItemViewModel(versionResult));
 
-            // Placeholder until IJavaModService is wired into the dashboard checks in a later plan.
-            Checks.Add(new CheckItemViewModel(new CheckResult("Mod Java à jour", CheckStatus.Passed, "Agent Java synchronisé.")));
+            var javaModInfo = await _javaModService.GetStatusAsync();
+            Checks.Add(new CheckItemViewModel(JavaModEvaluator.Evaluate(javaModInfo)));
 
             var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
                 requiredIds: new[] { "111", "222", "333" },
