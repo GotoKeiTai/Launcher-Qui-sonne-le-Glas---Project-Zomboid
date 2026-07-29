@@ -45,7 +45,38 @@ Un document de synthèse (mis à jour dans ce fichier, section "Conclusions" ci-
 
 ## 6. Conclusions
 
-*(à compléter une fois l'investigation terminée)*
+Investigation menée par décompilation (CFR 0.152) des classes du jeu, directement depuis l'installation macOS de Project Zomboid (`Project Zomboid.app/Contents/Java`, classes non empaquetées en jar, non obfusquées — décompilation directe sans extraction nécessaire).
+
+### Classes identifiées
+
+- **`zombie.core.raknet.VoiceManager`** — cœur de la logique VOIP côté client : calcul du volume perçu selon la distance, gestion de session, lecture des paramètres serveur.
+- **`zombie.core.raknet.VoiceManagerData`** — état par joueur, mais uniquement côté "auditeur" (mute, canal de lecture FMOD, données radio à proximité) — **aucun champ existant pour un "mode/palier" de transmission choisi par le joueur qui parle**.
+- **`zombie.network.ServerOptions`** — contient déjà `VoiceMinDistance` / `VoiceMaxDistance` (`DoubleServerOption`, bornes 0–100000, défauts 10.0 / 100.0) et `VoiceEnable`, `Voice3D`. Configurable côté admin serveur (équivalent PZ d'un `servertest.ini`), au même titre que les autres options serveur.
+- **`zombie.core.raknet.RakVoice`** — pont JNI vers `libRakNet.dylib` (bibliothèque native RakNet). Gère le **transport brut** des trames audio, hors de portée d'un patch bytecode Java.
+
+### Nature de la valeur de distance
+
+`minDistance`/`maxDistance` sont des **champs `static` sur `VoiceManager`** : une seule valeur globale par client, synchronisée une fois depuis `ServerOptions` au moment de la connexion (`VoiceOpenChannelReply`). **Aucune notion par-joueur n'existe aujourd'hui.**
+
+Point clé pour la faisabilité : le calcul "volume perçu selon la distance" (`UpdateVMClient()` → `IsoUtils.smoothstep(maxDistance, minDistance, distance)` → appels FMOD `SetVolume`/`Set3DAttributes`) est **entièrement en bytecode Java pur**, exécuté côté client. Le transport natif RakNet livre les trames audio à tout le monde indépendamment de la distance ; c'est uniquement le volume de lecture, calculé en Java, qui rend une voix inaudible au-delà de `maxDistance`. **On n'a donc pas besoin de toucher au code natif** — toute la logique pertinente est patchable par transformation bytecode.
+
+### Faisabilité et approche recommandée
+
+**Ce qui manque** : une notion de palier (chuchoter/parler/hurler) par joueur, synchronisée entre clients, et un point de patch qui substitue les `minDistance`/`maxDistance` globaux par des valeurs dépendant du palier choisi par le joueur **qui parle** (pas celui qui écoute) — la boucle de `UpdateVMClient()` itère déjà sur chaque joueur distant (`isoPlayer`) avant de calculer son volume, donc le point d'interception existe.
+
+Deux façons de synchroniser le palier choisi entre joueurs :
+- **Option A (recommandée)** — entièrement en **Lua**, via l'API réseau standard de PZ (`sendClientCommand` / `Events.OnClientCommand`), sans toucher au Java pour cette partie. Le patch bytecode n'a plus qu'à lire une table exposée par le mod Lua (le moteur Java dialogue déjà en permanence avec la VM Lua embarquée — imports `se.krka.kahlua.*` visibles dans `VoiceManager` lui-même). Minimise la portion de code patchée en bytecode, qui est la plus fragile et la plus coûteuse à revalider à chaque mise à jour du jeu.
+- **Option B** — un paquet réseau custom entièrement géré côté Java (agent). Plus robuste en théorie, mais duplique un mécanisme que Lua sait déjà faire nativement, pour un gain incertain.
+
+**Indicateur visuel (cercle au sol)** : confirmé faisable en Lua pur (dessin d'overlay + détection de touche), sans aucune dépendance au patch Java — comme pressenti initialement.
+
+### Recommandation pour le sous-projet 2
+
+1. Patch bytecode ciblé sur `VoiceManager` (méthode `UpdateVMClient()` ou équivalent après mise à jour du jeu) pour substituer le lookup global `minDistance`/`maxDistance` par un lookup par-émetteur.
+2. Synchronisation du palier choisi et indicateur visuel : 100% Lua (Option A), aucun nouveau code Java au-delà du patch de distance.
+3. Distances par palier configurables via `server.json` (cohérent avec le launcher) — `VoiceMaxDistance`/`VoiceMinDistance` de PZ servent de bornes globales pour le palier "hurler" (le plus fort), whisper/talk calculés comme fractions de cette plage.
+4. **Prochaine étape technique concrète, avant d'écrire le mod** : valider qu'un agent Java + une lib de transformation bytecode (ASM ou Javassist) peut réellement réécrire `UpdateVMClient()` sans casser le reste — ce n'est pas encore testé, seulement identifié comme le point de patch probable. À faire en tout début du sous-projet 2 (spike technique isolé avant le reste de l'implémentation).
+5. Risque à documenter dans le cahier des charges du mod : comme tout patch bytecode, fragile aux mises à jour du jeu — prévoir une détection de version + message d'erreur clair si la méthode cible a changé de forme, plutôt qu'un crash silencieux.
 
 ---
 
