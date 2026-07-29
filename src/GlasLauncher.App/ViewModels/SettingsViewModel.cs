@@ -8,12 +8,20 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GlasLauncher.Core.Services;
 
 namespace GlasLauncher.App.ViewModels;
 
 public partial class SettingsViewModel : ViewModelBase
 {
     private const string DiscordInviteUrl = "https://discord.gg/UmKM25QUhY";
+
+    private readonly IUpdateService _updateService;
+
+    public SettingsViewModel(IUpdateService updateService)
+    {
+        _updateService = updateService;
+    }
 
     public event Action? BackRequested;
 
@@ -107,7 +115,7 @@ public partial class SettingsViewModel : ViewModelBase
             return;
         }
 
-        await clipboard.SetTextAsync("Launcher v0.1.0 · Project Zomboid 41.78.16 · Mod Java v1.0.0");
+        await clipboard.SetTextAsync($"Launcher {_updateService.GetCurrentVersion()} · Project Zomboid 41.78.16 · Mod Java v1.0.0");
         StatusMessage = "Copié dans le presse-papiers.";
         IsStatusSuccess = true;
     }

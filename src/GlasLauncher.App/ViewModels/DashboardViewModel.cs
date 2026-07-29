@@ -16,14 +16,21 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly ISteamEnvironment _steamEnvironment;
     private readonly IServerInfoService _serverInfoService;
     private readonly IJavaModService _javaModService;
+    private readonly IUpdateService _updateService;
 
-    public DashboardViewModel(ISteamEnvironment steamEnvironment, IServerInfoService serverInfoService, IJavaModService javaModService)
+    public DashboardViewModel(
+        ISteamEnvironment steamEnvironment,
+        IServerInfoService serverInfoService,
+        IJavaModService javaModService,
+        IUpdateService updateService)
     {
         _steamEnvironment = steamEnvironment;
         _serverInfoService = serverInfoService;
         _javaModService = javaModService;
+        _updateService = updateService;
         Checks = new ObservableCollection<CheckItemViewModel>();
         News = new ObservableCollection<NewsItem>();
+        LauncherVersionText = _updateService.GetCurrentVersion();
 
         _ = RefreshAsync();
     }
@@ -49,6 +56,9 @@ public partial class DashboardViewModel : ViewModelBase
 
     [ObservableProperty]
     private string? _workshopSubscribeUrl;
+
+    [ObservableProperty]
+    private string _launcherVersionText = "";
 
     public ObservableCollection<CheckItemViewModel> Checks { get; }
 

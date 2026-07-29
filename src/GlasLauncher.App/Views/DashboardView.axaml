@@ -26,7 +26,7 @@
           <Border Height="1" Background="{StaticResource LineSoftBrush}" Margin="0,0,0,8" />
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="Launcher" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
-            <TextBlock Grid.Column="1" Text="v0.1.0" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="{Binding LauncherVersionText}" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
           </Grid>
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="Project Zomboid" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
