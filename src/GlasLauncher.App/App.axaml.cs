@@ -65,7 +65,10 @@ public partial class App : Application
             OperatingSystem.IsWindows()
                 ? new JavaModService(sp.GetRequiredService<ISteamEnvironment>(), JavaModManifestFetcher.CreateDefault())
                 : new FakeJavaModService());
-        services.AddSingleton<IUpdateService, FakeUpdateService>();
+        services.AddSingleton<IUpdateService>(_ =>
+            OperatingSystem.IsWindows()
+                ? new VelopackUpdateService()
+                : new FakeUpdateService());
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();
         services.AddSingleton<IFirstRunStore>(_ => FirstRunStore.CreateDefault());
 
