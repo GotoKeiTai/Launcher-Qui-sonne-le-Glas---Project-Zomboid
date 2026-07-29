@@ -1,0 +1,45 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*.*.*']
+
+permissions:
+  contents: write
+
+jobs:
+  package-and-release:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Test
+        run: dotnet test tests/GlasLauncher.Core.Tests
+
+      - name: Publish
+        run: dotnet publish src/GlasLauncher.App -c Release -r win-x64 --self-contained -o publish
+
+      - name: Install vpk
+        run: dotnet tool install --global vpk
+
+      - name: Extract version and release notes from the tag
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          "VERSION=$version" >> $env:GITHUB_ENV
+          git tag -l --format='%(contents)' ${{ github.ref_name }} > release-notes.md
+
+      - name: Download previous release (enables delta updates)
+        run: vpk download github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+
+      - name: Pack
+        run: vpk pack --packId GlasLauncher --packVersion $env:VERSION --packDir publish --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico --releaseNotes release-notes.md
+
+      - name: Upload to GitHub Releases
+        run: vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }} --publish --outputDir Releases --releaseName "Glas Launcher $env:VERSION" --tag ${{ github.ref_name }}
