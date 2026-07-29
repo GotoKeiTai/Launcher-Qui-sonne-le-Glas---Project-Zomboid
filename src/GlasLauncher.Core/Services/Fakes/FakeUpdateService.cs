@@ -12,4 +12,6 @@ public class FakeUpdateService : IUpdateService
     {
         await Task.Delay(500);
     }
+
+    public string GetCurrentVersion() => "0.1.0-dev";
 }

@@ -6,4 +6,5 @@ public interface IUpdateService
 {
     Task<UpdateInfo?> CheckForUpdateAsync();
     Task ApplyUpdateAsync();
+    string GetCurrentVersion();
 }
