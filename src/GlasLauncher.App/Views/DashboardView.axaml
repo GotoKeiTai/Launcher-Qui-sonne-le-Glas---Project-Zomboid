@@ -38,6 +38,7 @@
           </Grid>
         </StackPanel>
 
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="20">
 
           <!-- Brand -->
@@ -124,6 +125,7 @@
           </StackPanel>
 
         </StackPanel>
+        </ScrollViewer>
       </DockPanel>
     </Border>
 
