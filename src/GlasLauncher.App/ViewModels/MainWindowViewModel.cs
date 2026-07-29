@@ -1,15 +1,12 @@
 using System;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
 using GlasLauncher.Core.Services;
-using GlasLauncher.Core.Services.Fakes;
 
 namespace GlasLauncher.App.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
-    private readonly FakeSteamEnvironment _fakeSteamEnvironment;
     private readonly IJavaModService _javaModService;
     private readonly IUpdateService _updateService;
     private readonly DashboardViewModel _dashboard;
@@ -26,13 +23,11 @@ public partial class MainWindowViewModel : ViewModelBase
         SettingsViewModel settings,
         NewsViewModel news,
         FirstRunViewModel firstRun,
-        FakeSteamEnvironment fakeSteamEnvironment,
         IJavaModService javaModService,
         IUpdateService updateService)
     {
         _dashboard = dashboard;
         _firstRun = firstRun;
-        _fakeSteamEnvironment = fakeSteamEnvironment;
         _javaModService = javaModService;
         _updateService = updateService;
         _currentPage = dashboard;
@@ -81,15 +76,5 @@ public partial class MainWindowViewModel : ViewModelBase
         };
         CurrentModal = modal;
         _ = modal.RunRepairAsync();
-    }
-
-    [RelayCommand]
-    private async Task ToggleWorkshopScenarioAsync()
-    {
-        _fakeSteamEnvironment.SimulateWorkshopMissing = !_fakeSteamEnvironment.SimulateWorkshopMissing;
-        if (_dashboard.RefreshCommand.CanExecute(null))
-        {
-            await _dashboard.RefreshCommand.ExecuteAsync(null);
-        }
     }
 }
