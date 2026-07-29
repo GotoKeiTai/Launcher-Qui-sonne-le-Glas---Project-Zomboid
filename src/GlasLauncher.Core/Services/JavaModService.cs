@@ -7,11 +7,9 @@ namespace GlasLauncher.Core.Services;
 
 public class JavaModService : IJavaModService
 {
-    // Placeholder — the VOIP mod (GlasVoipMod) has no stable jar name/release yet. Used only
-    // as a fallback when the remote manifest doesn't supply RequiredLaunchOptions (i.e. no real
-    // hosting exists yet, same situation as JavaModManifestFetcher's placeholder URL). Once the
-    // manifest is hosted for real, its RequiredLaunchOptions takes over automatically and this
-    // default is never consulted.
+    // Fallback used only when the remote manifest fetch fails or omits RequiredLaunchOptions
+    // (e.g. network unavailable). Mirrors GlasVoipMod's published manifest value, so the check
+    // stays correct even when the manifest can't be reached.
     private const string DefaultRequiredLaunchOption = "-javaagent:GlasVoipMod.jar";
 
     private readonly ISteamEnvironment _steamEnvironment;

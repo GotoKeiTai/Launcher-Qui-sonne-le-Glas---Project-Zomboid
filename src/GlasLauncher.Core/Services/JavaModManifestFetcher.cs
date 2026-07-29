@@ -7,9 +7,9 @@ namespace GlasLauncher.Core.Services;
 
 public class JavaModManifestFetcher
 {
-    // Placeholder — no real hosting exists yet (see spec, §8.3 of the cahier des charges).
-    // Update once the manifest is actually published somewhere.
-    private const string ManifestUrl = "https://raw.githubusercontent.com/GotoKeiTai/glas-launcher-hosting/main/java-mod-manifest.json";
+    // Published by GlasVoipMod's own CI/release pipeline (see its
+    // docs/superpowers/specs/2026-07-30-java-mod-ci-release-design.md).
+    private const string ManifestUrl = "https://github.com/GotoKeiTai/GlasVoipMod/releases/latest/download/manifest.json";
 
     private static readonly JsonSerializerOptions SerializerOptions = new() { PropertyNameCaseInsensitive = true };
 
