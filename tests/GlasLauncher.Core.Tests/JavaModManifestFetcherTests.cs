@@ -36,6 +36,23 @@ public class JavaModManifestFetcherTests
     }
 
     [Fact]
+    public async Task FetchAsync_ValidJsonWithoutFilesKey_ReturnsManifestWithEmptyFiles()
+    {
+        const string json = "{}";
+        var httpClient = new HttpClient(new StubHttpMessageHandler(new HttpResponseMessage(HttpStatusCode.OK)
+        {
+            Content = new StringContent(json, Encoding.UTF8, "application/json")
+        }));
+        var fetcher = new JavaModManifestFetcher(httpClient);
+
+        var manifest = await fetcher.FetchAsync();
+
+        Assert.NotNull(manifest);
+        Assert.NotNull(manifest!.Files);
+        Assert.Empty(manifest.Files);
+    }
+
+    [Fact]
     public async Task FetchAsync_HttpErrorStatus_ReturnsNull()
     {
         var httpClient = new HttpClient(new StubHttpMessageHandler(

@@ -41,6 +41,17 @@ public class JavaModEvaluatorTests
     }
 
     [Fact]
+    public void Evaluate_LaunchOptionNotConfiguredAndNoFiles_ReturnsFailedWithLaunchOptionMessage()
+    {
+        var info = new JavaModInfo(LaunchOptionConfigured: false, Files: Array.Empty<JavaFileStatus>());
+
+        var result = JavaModEvaluator.Evaluate(info);
+
+        Assert.Equal(CheckStatus.Failed, result.Status);
+        Assert.Equal("Option de lancement Steam manquante pour l'agent Java.", result.Message);
+    }
+
+    [Fact]
     public void Evaluate_LaunchOptionConfiguredAndAllFilesUpToDate_ReturnsPassed()
     {
         var info = new JavaModInfo(

@@ -20,13 +20,15 @@ public class JavaModManifestFetcher
         _httpClient = httpClient;
     }
 
-    public static JavaModManifestFetcher CreateDefault() => new(new HttpClient());
+    public static JavaModManifestFetcher CreateDefault() =>
+        new(new HttpClient { Timeout = TimeSpan.FromSeconds(10) });
 
     public async Task<JavaModManifest?> FetchAsync()
     {
         try
         {
-            return await _httpClient.GetFromJsonAsync<JavaModManifest>(ManifestUrl, SerializerOptions);
+            var manifest = await _httpClient.GetFromJsonAsync<JavaModManifest>(ManifestUrl, SerializerOptions);
+            return manifest is null ? null : manifest with { Files = manifest.Files ?? Array.Empty<JavaFileEntry>() };
         }
         catch (Exception)
         {
