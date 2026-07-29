@@ -6,10 +6,11 @@ public class FakeJavaModService : IJavaModService
 {
     public Task<JavaModInfo> GetStatusAsync() =>
         Task.FromResult(new JavaModInfo(
-            InstalledVersion: "1.0.0",
-            InstalledSha256: "abc123",
-            RequiredVersion: "1.0.0",
-            RequiredSha256: "abc123"));
+            LaunchOptionConfigured: true,
+            Files: new List<JavaFileStatus>
+            {
+                new("GlasVoipMod.jar", InstalledVersion: "0.1.0", RequiredVersion: "0.1.0", IsUpToDate: true)
+            }));
 
     public async Task RepairAsync(IProgress<RepairProgress> progress)
     {
