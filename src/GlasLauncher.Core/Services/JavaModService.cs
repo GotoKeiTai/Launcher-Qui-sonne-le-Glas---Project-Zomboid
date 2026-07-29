@@ -7,6 +7,13 @@ namespace GlasLauncher.Core.Services;
 
 public class JavaModService : IJavaModService
 {
+    // Placeholder — the VOIP mod (GlasVoipMod) has no stable jar name/release yet. Used only
+    // as a fallback when the remote manifest doesn't supply RequiredLaunchOptions (i.e. no real
+    // hosting exists yet, same situation as JavaModManifestFetcher's placeholder URL). Once the
+    // manifest is hosted for real, its RequiredLaunchOptions takes over automatically and this
+    // default is never consulted.
+    private const string DefaultRequiredLaunchOption = "-javaagent:GlasVoipMod.jar";
+
     private readonly ISteamEnvironment _steamEnvironment;
     private readonly JavaModManifestFetcher _manifestFetcher;
 
@@ -18,11 +25,15 @@ public class JavaModService : IJavaModService
 
     public async Task<JavaModInfo> GetStatusAsync()
     {
+        IReadOnlyList<string> requiredLaunchOptions = Array.Empty<string>();
+        var launchOptionConfigured = false;
+
         try
         {
             var manifest = await _manifestFetcher.FetchAsync();
-            var requiredLaunchOptions = manifest?.RequiredLaunchOptions ?? Array.Empty<string>();
-            var launchOptionConfigured = await _steamEnvironment.IsJavaAgentLaunchOptionConfiguredAsync(requiredLaunchOptions);
+            var manifestOptions = manifest?.RequiredLaunchOptions;
+            requiredLaunchOptions = manifestOptions is { Count: > 0 } ? manifestOptions : new[] { DefaultRequiredLaunchOption };
+            launchOptionConfigured = await _steamEnvironment.IsJavaAgentLaunchOptionConfiguredAsync(requiredLaunchOptions);
 
             var installPath = await _steamEnvironment.GetGameInstallPathAsync();
             if (installPath is null || manifest is null)
@@ -35,7 +46,7 @@ public class JavaModService : IJavaModService
         }
         catch (Exception)
         {
-            return new JavaModInfo(false, Array.Empty<string>(), Array.Empty<JavaFileStatus>());
+            return new JavaModInfo(launchOptionConfigured, requiredLaunchOptions, Array.Empty<JavaFileStatus>());
         }
     }
 
