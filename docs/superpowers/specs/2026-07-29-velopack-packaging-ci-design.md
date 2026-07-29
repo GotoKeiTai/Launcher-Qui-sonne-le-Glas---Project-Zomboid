@@ -10,7 +10,7 @@ Référence produit : `docs/cahier-des-charges.md` §8.2 (distribution & mise à
 Déjà décidé par le cahier des charges (repris tel quel ici, pas rediscuté) :
 
 - **Velopack** (successeur de Squirrel.Windows) pour packaging + auto-update, support natif GitHub Releases.
-- Installeur `GlasLauncherSetup.exe`, installation dans `%LocalAppData%` sans élévation UAC. Pas de MSI ni MSIX.
+- Installeur `GlasLauncher-win-Setup.exe`, installation dans `%LocalAppData%` sans élévation UAC. Pas de MSI ni MSIX.
 - Distribution via URL stable GitHub Releases, épinglée sur le Discord du serveur.
 - **Pas de signature de code en phase bêta** — hash + HTTPS uniquement, avertissement SmartScreen documenté pour les testeurs. SignPath.io (gratuit, open source) prévu à l'ouverture publique, hors-scope ici.
 - Pipeline GitHub Actions, runners `windows-latest`.
@@ -60,7 +60,7 @@ dotnet publish src/GlasLauncher.App -c Release -r win-x64 --self-contained -o pu
 vpk download github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid \
   --token <GITHUB_TOKEN>
 
-# 3. Empaqueter — packId "GlasLauncher" produit bien GlasLauncherSetup.exe (convention Velopack :
+# 3. Empaqueter — packId "GlasLauncher" produit bien GlasLauncher-win-Setup.exe (convention Velopack :
 # <packId>Setup.exe), icône réutilisée depuis Tâche 1 du sous-projet précédent
 vpk pack --packId GlasLauncher --packVersion <version> --packDir publish \
   --mainExe GlasLauncher.App.exe --icon src/GlasLauncher.App/Assets/shield.ico \
@@ -223,7 +223,7 @@ git push --tags
 
 1. Poser un tag annoté multi-lignes (voir commande PowerShell ci-dessus) et le pousser.
 2. `release.yml` se déclenche : tests → publish self-contained → `vpk pack` → `vpk upload github --publish`.
-3. La Release GitHub apparaît avec `GlasLauncherSetup.exe` en asset ; le lien stable (`.../releases/latest/download/GlasLauncherSetup.exe`) pointe automatiquement dessus.
+3. La Release GitHub apparaît avec `GlasLauncher-win-Setup.exe` en asset ; le lien stable (`.../releases/latest/download/GlasLauncher-win-Setup.exe`) pointe automatiquement dessus.
 
 **Vérifier/appliquer côté joueur :**
 
@@ -244,7 +244,7 @@ git push --tags
 - Pas de test unitaire dédié pour `VelopackUpdateService` (orchestration réseau/Windows, dépendance à un vrai dépôt GitHub) — même convention que `SteamEnvironment`/`JavaModService`.
 - `ci.yml` constitue le filet de sécurité automatisé pour toute la base de code existante (`dotnet test tests/GlasLauncher.Core.Tests`, inchangé).
 - Vérification manuelle sur la VM Windows, en 4 étapes :
-  1. Tag `v0.1.0` → confirmer que `release.yml` produit une Release avec `GlasLauncherSetup.exe`.
+  1. Tag `v0.1.0` → confirmer que `release.yml` produit une Release avec `GlasLauncher-win-Setup.exe`.
   2. Installer via cet exe → confirmer l'installation dans `%LocalAppData%` sans élévation, raccourci Menu Démarrer.
   3. Tag `v0.1.1` → confirmer que l'app déjà installée détecte la mise à jour, l'applique, redémarre correctement dans la nouvelle version.
   4. Confirmer l'avertissement SmartScreen attendu (pas de signature) et le documenter pour les testeurs bêta.

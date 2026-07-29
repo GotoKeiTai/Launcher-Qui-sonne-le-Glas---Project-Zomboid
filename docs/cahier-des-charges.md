@@ -171,8 +171,8 @@ Rôle **purement informatif** : Project Zomboid applique lui-même le blocage de
 ### 8.2 Distribution & mise à jour
 
 - **Packaging & auto-update** : [Velopack](https://velopack.io) (successeur de Squirrel.Windows), support natif de GitHub Releases comme source de mise à jour.
-- **Installeur** : `GlasLauncherSetup.exe` généré par Velopack — installation dans `%LocalAppData%` sans élévation UAC/admin, raccourci Menu Démarrer, désinstallation propre. Pas de MSI (inutilement lourd) ni de MSIX (sandboxing incompatible avec l'accès nécessaire aux fichiers Steam/registre).
-- **Canal de diffusion** : URL stable GitHub Releases (`.../releases/latest/download/GlasLauncherSetup.exe`), épinglée une seule fois sur le Discord du serveur.
+- **Installeur** : `GlasLauncher-win-Setup.exe` généré par Velopack (le nom inclut le canal `-win-` par convention Velopack, pas juste `<packId>Setup.exe`) — installation dans `%LocalAppData%` sans élévation UAC/admin, raccourci Menu Démarrer, désinstallation propre. Pas de MSI (inutilement lourd) ni de MSIX (sandboxing incompatible avec l'accès nécessaire aux fichiers Steam/registre).
+- **Canal de diffusion** : URL stable GitHub Releases (`.../releases/latest/download/GlasLauncher-win-Setup.exe`), épinglée une seule fois sur le Discord du serveur.
 
 ### 8.3 Hébergement (sans VPS)
 
