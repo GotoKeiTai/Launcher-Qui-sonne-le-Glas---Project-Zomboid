@@ -29,6 +29,12 @@ public partial class DashboardViewModel : ViewModelBase
     }
 
     [ObservableProperty]
+    private bool _isServerOnline;
+
+    [ObservableProperty]
+    private string _serverStatusText = "Vérification en cours…";
+
+    [ObservableProperty]
     private int _players;
 
     [ObservableProperty]
@@ -58,6 +64,8 @@ public partial class DashboardViewModel : ViewModelBase
             WorkshopSubscribeUrl = null;
 
             var server = await _serverInfoService.GetServerInfoAsync();
+            IsServerOnline = server.Status == "online";
+            ServerStatusText = IsServerOnline ? "Serveur en ligne" : "Serveur hors ligne";
             Players = server.Players;
             PingMs = server.PingMs;
 
@@ -101,9 +109,10 @@ public partial class DashboardViewModel : ViewModelBase
             }
 
             CanPlay = Checks.All(c => c.Status == CheckStatus.Passed);
+            var firstFailedCheck = Checks.FirstOrDefault(c => c.Status == CheckStatus.Failed);
             StatusMessage = CanPlay
                 ? "Prêt à jouer — toutes les vérifications sont validées"
-                : "Action requise — abonnez-vous à la collection Workshop pour rejoindre le serveur";
+                : "Action requise — " + firstFailedCheck!.Message;
         }
         catch (Exception ex)
         {

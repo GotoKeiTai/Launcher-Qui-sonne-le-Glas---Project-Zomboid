@@ -21,7 +21,8 @@ public static class GameVersionEvaluator
             return new CheckResult(
                 CheckName,
                 CheckStatus.Failed,
-                $"Version du jeu non conforme (buildid {detected.BuildId} détecté, {required.RequiredBuildId} attendu).");
+                $"Votre version de Project Zomboid n'est pas à jour (version {required.DisplayVersion} attendue). " +
+                "Vérifiez l'intégrité des fichiers du jeu dans Steam.");
         }
 
         return new CheckResult(CheckName, CheckStatus.Passed, required.DisplayVersion);

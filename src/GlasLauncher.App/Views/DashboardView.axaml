@@ -54,10 +54,10 @@
                   BorderThickness="1" CornerRadius="10" Padding="14,12">
             <Grid ColumnDefinitions="*,Auto">
               <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
-                <Ellipse Width="8" Height="8" Fill="{StaticResource OkBrush}" />
-                <TextBlock Text="Serveur en ligne" Foreground="{StaticResource InkBrush}" FontWeight="SemiBold" />
+                <Ellipse Width="8" Height="8" Fill="{Binding IsServerOnline, Converter={StaticResource BoolToStatusBrushConverter}}" />
+                <TextBlock Text="{Binding ServerStatusText}" Foreground="{StaticResource InkBrush}" FontWeight="SemiBold" />
               </StackPanel>
-              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+              <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12" IsVisible="{Binding IsServerOnline}">
                 <TextBlock Text="{Binding Players, StringFormat='{}{0} joueurs'}"
                            Foreground="{StaticResource InkDimBrush}" FontSize="12" />
                 <TextBlock Text="{Binding PingMs, StringFormat='{}{0} ms'}"

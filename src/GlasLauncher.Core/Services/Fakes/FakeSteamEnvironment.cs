@@ -11,7 +11,7 @@ public class FakeSteamEnvironment : ISteamEnvironment
     public Task<bool> IsSteamRunningAsync() => Task.FromResult(true);
 
     public Task<GameVersionInfo?> GetInstalledGameVersionAsync() =>
-        Task.FromResult<GameVersionInfo?>(new GameVersionInfo(BuildId: "18234567", Branch: "public"));
+        Task.FromResult<GameVersionInfo?>(new GameVersionInfo(BuildId: "24432948", Branch: "legacy41"));
 
     public Task<WorkshopStatus> GetWorkshopStatusAsync(IReadOnlyList<string> requiredIds, string collectionId)
     {

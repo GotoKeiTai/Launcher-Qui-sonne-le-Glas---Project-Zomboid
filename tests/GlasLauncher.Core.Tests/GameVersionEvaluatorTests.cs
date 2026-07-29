@@ -39,6 +39,8 @@ public class GameVersionEvaluatorTests
         var result = GameVersionEvaluator.Evaluate(detected, Requirement);
 
         Assert.Equal(CheckStatus.Failed, result.Status);
-        Assert.Contains("17000000", result.Message);
+        Assert.DoesNotContain("17000000", result.Message);
+        Assert.DoesNotContain("18234567", result.Message);
+        Assert.Contains("41.78.16", result.Message);
     }
 }

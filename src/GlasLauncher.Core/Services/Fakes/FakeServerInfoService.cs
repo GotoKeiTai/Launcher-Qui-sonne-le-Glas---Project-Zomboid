@@ -4,14 +4,20 @@ namespace GlasLauncher.Core.Services.Fakes;
 
 public class FakeServerInfoService : IServerInfoService
 {
+    // No real server connectivity exists yet (see docs/session-notes.md, sub-project #4:
+    // a real IServerInfoService fetching server.json/mods.json from static hosting) —
+    // report honestly that the server is unreachable rather than faking an online status.
     public Task<ServerInfo> GetServerInfoAsync() =>
-        Task.FromResult(new ServerInfo(Status: "online", Players: 14, MaxPlayers: 32, PingMs: 32));
+        Task.FromResult(new ServerInfo(Status: "offline", Players: 0, MaxPlayers: 0, PingMs: 0));
 
+    // legacy41 is still receiving hotfixes as of this writing — this buildid/version pair
+    // will go stale again the next time the server updates. Until the real IServerInfoService
+    // (sub-project #4) fetches this from hosting, it must be updated here by hand.
     public Task<GameVersionRequirement> GetGameVersionRequirementAsync() =>
         Task.FromResult(new GameVersionRequirement(
-            RequiredBuildId: "18234567",
-            RequiredBranch: "public",
-            DisplayVersion: "41.78.16"));
+            RequiredBuildId: "24432948",
+            RequiredBranch: "legacy41",
+            DisplayVersion: "41.78.20"));
 
     public Task<IReadOnlyList<NewsItem>> GetNewsAsync() =>
         Task.FromResult<IReadOnlyList<NewsItem>>(new List<NewsItem>
