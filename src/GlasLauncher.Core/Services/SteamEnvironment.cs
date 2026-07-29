@@ -17,7 +17,16 @@ public class SteamEnvironment : ISteamEnvironment
     {
         _steamPath = steamPath;
         _location = new Lazy<SteamGameLocation?>(() =>
-            _steamPath is null ? null : SteamLibraryLocator.Locate(_steamPath));
+        {
+            try
+            {
+                return _steamPath is null ? null : SteamLibraryLocator.Locate(_steamPath);
+            }
+            catch
+            {
+                return null;
+            }
+        });
     }
 
     [SupportedOSPlatform("windows")]
@@ -31,8 +40,17 @@ public class SteamEnvironment : ISteamEnvironment
     public Task<bool> IsSteamInstalledAsync() =>
         Task.FromResult(_steamPath is not null && Directory.Exists(_steamPath));
 
-    public Task<bool> IsSteamRunningAsync() =>
-        Task.FromResult(Process.GetProcessesByName("steam").Length > 0);
+    public Task<bool> IsSteamRunningAsync()
+    {
+        try
+        {
+            return Task.FromResult(Process.GetProcessesByName("steam").Length > 0);
+        }
+        catch
+        {
+            return Task.FromResult(false);
+        }
+    }
 
     public Task<GameVersionInfo?> GetInstalledGameVersionAsync()
     {
@@ -54,7 +72,16 @@ public class SteamEnvironment : ISteamEnvironment
 
     public Task LaunchGameAsync()
     {
-        Process.Start(new ProcessStartInfo($"steam://run/{AppId}") { UseShellExecute = true });
+        try
+        {
+            Process.Start(new ProcessStartInfo($"steam://run/{AppId}") { UseShellExecute = true });
+        }
+        catch
+        {
+            // No meaningful way to surface a launch failure through this method's signature;
+            // swallow and no-op, consistent with the rest of this class returning graceful negatives.
+        }
+
         return Task.CompletedTask;
     }
 }
