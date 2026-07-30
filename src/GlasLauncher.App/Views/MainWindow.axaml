@@ -8,6 +8,7 @@
         Width="1200" Height="860"
         MinWidth="960" MinHeight="640"
         CanResize="True"
+        WindowStartupLocation="CenterScreen"
         SystemDecorations="None"
         Background="{StaticResource BgDeepBrush}">
 
