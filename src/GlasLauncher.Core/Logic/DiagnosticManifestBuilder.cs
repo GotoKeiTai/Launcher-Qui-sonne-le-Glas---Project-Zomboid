@@ -20,15 +20,21 @@ public static class DiagnosticManifestBuilder
         sb.AppendLine($"Buildid requis : {snapshot.RequiredGameVersion.RequiredBuildId}");
         sb.AppendLine($"Branche requise : {snapshot.RequiredGameVersion.RequiredBranch}");
         sb.AppendLine($"Version affichée requise : {snapshot.RequiredGameVersion.DisplayVersion}");
+        sb.AppendLine($"Dossier d'installation : {snapshot.InstallPath ?? "introuvable"}");
         sb.AppendLine();
         sb.AppendLine("--- Mod Java ---");
         sb.AppendLine($"Option de lancement configurée : {(snapshot.JavaModInfo.LaunchOptionConfigured ? "oui" : "non")}");
         sb.AppendLine($"Option(s) requise(s) : {string.Join(" ", snapshot.JavaModInfo.RequiredLaunchOptions)}");
+        if (snapshot.JavaModInfo.Files.Count == 0)
+        {
+            sb.AppendLine("Aucun fichier de mod Java détecté.");
+        }
         foreach (var file in snapshot.JavaModInfo.Files)
         {
             var hash = snapshot.JavaModFileHashes.FirstOrDefault(h => h.FileName == file.FileName)?.Sha256 ?? "indisponible";
             sb.AppendLine($"{file.FileName} :");
-            sb.AppendLine($"  Version installée : {file.InstalledVersion ?? "non installé"}");
+            var installedLabel = file.InstalledVersion ?? (hash == "indisponible" ? "non installé" : "installée mais non conforme");
+            sb.AppendLine($"  Version installée : {installedLabel}");
             sb.AppendLine($"  Version requise : {file.RequiredVersion}");
             sb.AppendLine($"  À jour : {(file.IsUpToDate ? "oui" : "non")}");
             sb.AppendLine($"  SHA-256 : {hash}");

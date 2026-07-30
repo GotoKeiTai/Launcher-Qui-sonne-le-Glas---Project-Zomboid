@@ -11,6 +11,7 @@ public class DiagnosticManifestBuilderTests
         WindowsDescription: "Microsoft Windows 10.0.26200",
         DetectedGameVersion: new GameVersionInfo("24432948", "legacy41"),
         RequiredGameVersion: new GameVersionRequirement("24432948", "legacy41", "41.78.20"),
+        InstallPath: @"D:\SteamLibrary\steamapps\common\ProjectZomboid",
         JavaModInfo: new JavaModInfo(
             LaunchOptionConfigured: true,
             RequiredLaunchOptions: new[] { "-javaagent:GlasVoipMod.jar" },
@@ -40,6 +41,7 @@ public class DiagnosticManifestBuilderTests
             "Buildid requis : 24432948" + Environment.NewLine +
             "Branche requise : legacy41" + Environment.NewLine +
             "Version affichée requise : 41.78.20" + Environment.NewLine +
+            @"Dossier d'installation : D:\SteamLibrary\steamapps\common\ProjectZomboid" + Environment.NewLine +
             Environment.NewLine +
             "--- Mod Java ---" + Environment.NewLine +
             "Option de lancement configurée : oui" + Environment.NewLine +
@@ -86,6 +88,61 @@ public class DiagnosticManifestBuilderTests
         Assert.Contains("Version installée : non installé", result);
         Assert.Contains("  À jour : non", result);
         Assert.Contains("SHA-256 : indisponible", result);
+    }
+
+    [Fact]
+    public void Build_InstallPathSet_ShowsInstallPath()
+    {
+        var snapshot = CreateNominalSnapshot() with { InstallPath = @"C:\Games\ProjectZomboid" };
+
+        var result = DiagnosticManifestBuilder.Build(snapshot);
+
+        Assert.Contains(@"Dossier d'installation : C:\Games\ProjectZomboid", result);
+    }
+
+    [Fact]
+    public void Build_InstallPathNull_ShowsIntrouvable()
+    {
+        var snapshot = CreateNominalSnapshot() with { InstallPath = null };
+
+        var result = DiagnosticManifestBuilder.Build(snapshot);
+
+        Assert.Contains("Dossier d'installation : introuvable", result);
+    }
+
+    [Fact]
+    public void Build_NoJavaModFiles_ShowsAucunFichierDetecte()
+    {
+        var snapshot = CreateNominalSnapshot() with
+        {
+            JavaModInfo = new JavaModInfo(
+                LaunchOptionConfigured: false,
+                RequiredLaunchOptions: new[] { "-javaagent:GlasVoipMod.jar" },
+                Files: Array.Empty<JavaFileStatus>()),
+            JavaModFileHashes = Array.Empty<JavaModFileHash>()
+        };
+
+        var result = DiagnosticManifestBuilder.Build(snapshot);
+
+        Assert.Contains("Aucun fichier de mod Java détecté.", result);
+    }
+
+    [Fact]
+    public void Build_JavaModPresentButOutdated_ShowsInstalleeMaisNonConforme()
+    {
+        var snapshot = CreateNominalSnapshot() with
+        {
+            JavaModInfo = new JavaModInfo(
+                LaunchOptionConfigured: true,
+                RequiredLaunchOptions: new[] { "-javaagent:GlasVoipMod.jar" },
+                Files: new[] { new JavaFileStatus("GlasVoipMod.jar", null, "1.0.0", false) }),
+            JavaModFileHashes = new[] { new JavaModFileHash("GlasVoipMod.jar", "0123456789ABCDEF") }
+        };
+
+        var result = DiagnosticManifestBuilder.Build(snapshot);
+
+        Assert.Contains("Version installée : installée mais non conforme", result);
+        Assert.DoesNotContain("Version installée : non installé", result);
     }
 
     [Fact]

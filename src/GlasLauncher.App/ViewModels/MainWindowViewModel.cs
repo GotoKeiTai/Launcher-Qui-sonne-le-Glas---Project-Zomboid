@@ -35,7 +35,11 @@ public partial class MainWindowViewModel : ViewModelBase
         _logger = logger;
         _currentPage = dashboard;
 
-        dashboard.SettingsRequested += () => CurrentPage = settings;
+        dashboard.SettingsRequested += () =>
+        {
+            CurrentPage = settings;
+            _ = settings.RefreshVersionInfoAsync();
+        };
         dashboard.ChangelogRequested += () =>
         {
             news.ShowChangelogTabCommand.Execute(null);

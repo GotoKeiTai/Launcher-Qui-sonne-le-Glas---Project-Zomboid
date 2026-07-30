@@ -30,6 +30,7 @@ public class DiagnosticReportService : IDiagnosticReportService
 
     public async Task<string> GenerateAsync()
     {
+        string? zipPath = null;
         try
         {
             var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
@@ -48,6 +49,7 @@ public class DiagnosticReportService : IDiagnosticReportService
                 WindowsDescription: RuntimeInformation.OSDescription,
                 DetectedGameVersion: detectedVersion,
                 RequiredGameVersion: requiredVersion,
+                InstallPath: installPath,
                 JavaModInfo: javaModInfo,
                 JavaModFileHashes: fileHashes,
                 WorkshopStatus: workshopStatus,
@@ -56,7 +58,7 @@ public class DiagnosticReportService : IDiagnosticReportService
             var manifestText = DiagnosticManifestBuilder.Build(snapshot);
 
             var desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-            var zipPath = Path.Combine(desktopPath, $"GlasLauncher-diagnostic-{DateTime.Now:yyyy-MM-dd-HHmm}.zip");
+            zipPath = Path.Combine(desktopPath, $"GlasLauncher-diagnostic-{DateTime.Now:yyyy-MM-dd-HHmmss}.zip");
 
             using (var zip = ZipFile.Open(zipPath, ZipArchiveMode.Create))
             {
@@ -92,6 +94,17 @@ public class DiagnosticReportService : IDiagnosticReportService
         catch (Exception ex)
         {
             _logger.Error("Échec de la génération du rapport de diagnostic", ex);
+            try
+            {
+                if (zipPath is not null && File.Exists(zipPath))
+                {
+                    File.Delete(zipPath);
+                }
+            }
+            catch (Exception)
+            {
+                // Best-effort cleanup — never let this mask the real failure below.
+            }
             throw new InvalidOperationException("Impossible de générer le rapport de diagnostic.", ex);
         }
     }

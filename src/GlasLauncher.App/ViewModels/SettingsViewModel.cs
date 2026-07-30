@@ -39,7 +39,7 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     private string _versionInfoText;
 
-    private async Task RefreshVersionInfoAsync()
+    public async Task RefreshVersionInfoAsync()
     {
         var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
         var javaModInfo = await _javaModService.GetStatusAsync();
