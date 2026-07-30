@@ -65,6 +65,15 @@ public class JavaModService : IJavaModService
 
         progress.Report(new RepairProgress(RepairStepNames.DownloadingJavaMod, 30));
 
+        foreach (var entry in outdatedEntries)
+        {
+            if (!Uri.TryCreate(entry.DownloadUrl, UriKind.Absolute, out var downloadUri)
+                || downloadUri.Scheme != Uri.UriSchemeHttps)
+            {
+                throw new InvalidOperationException($"URL de téléchargement invalide pour {entry.FileName}.");
+            }
+        }
+
         using var httpClient = new HttpClient();
         var totalBytes = 0L;
         foreach (var entry in outdatedEntries)
@@ -114,8 +123,12 @@ public class JavaModService : IJavaModService
         progress.Report(new RepairProgress(RepairStepNames.Installing, 100));
         foreach (var entry in outdatedEntries)
         {
+            if (!SafeFilePath.TryResolve(installPath, entry.FileName, out var destinationPath))
+            {
+                throw new InvalidOperationException($"Nom de fichier invalide pour {entry.FileName}.");
+            }
+
             var tempPath = tempFiles[entry.FileName];
-            var destinationPath = Path.Combine(installPath, entry.FileName);
             File.Move(tempPath, destinationPath, overwrite: true);
         }
     }

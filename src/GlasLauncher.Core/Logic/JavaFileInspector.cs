@@ -11,8 +11,9 @@ public static class JavaFileInspector
 
         foreach (var entry in manifest.Files)
         {
-            var filePath = Path.Combine(installPath, entry.FileName);
-            var localSha256 = TryComputeSha256(filePath);
+            var localSha256 = SafeFilePath.TryResolve(installPath, entry.FileName, out var filePath)
+                ? TryComputeSha256(filePath)
+                : null;
             var isUpToDate = localSha256 is not null
                 && string.Equals(localSha256, entry.Sha256, StringComparison.OrdinalIgnoreCase);
 

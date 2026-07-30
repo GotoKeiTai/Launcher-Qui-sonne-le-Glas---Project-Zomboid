@@ -111,14 +111,13 @@ public class DiagnosticReportService : IDiagnosticReportService
 
     private static string? TryComputeSha256(string? installPath, string fileName)
     {
-        if (installPath is null)
+        if (installPath is null || !SafeFilePath.TryResolve(installPath, fileName, out var filePath))
         {
             return null;
         }
 
         try
         {
-            var filePath = Path.Combine(installPath, fileName);
             using var stream = File.OpenRead(filePath);
             return Convert.ToHexString(SHA256.HashData(stream));
         }

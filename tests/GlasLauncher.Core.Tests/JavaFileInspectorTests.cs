@@ -107,6 +107,28 @@ public class JavaFileInspectorTests
         Directory.Delete(installPath, recursive: true);
     }
 
+    [Fact]
+    public void GetFileStatuses_PathTraversalFileName_TreatedAsNotUpToDate_DoesNotEscapeInstallDir()
+    {
+        var installPath = CreateTempDir();
+        Directory.CreateDirectory(installPath);
+
+        var manifest = new JavaModManifest(
+            new[]
+            {
+                new JavaFileEntry(@"..\..\evil.exe", "1.0.0", MatchingSha256, "https://example.com/evil.exe")
+            },
+            Array.Empty<string>());
+
+        var result = JavaFileInspector.GetFileStatuses(installPath, manifest);
+
+        Assert.Single(result);
+        Assert.Null(result[0].InstalledVersion);
+        Assert.False(result[0].IsUpToDate);
+
+        Directory.Delete(installPath, recursive: true);
+    }
+
     private static string CreateTempDir() =>
         Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 }
