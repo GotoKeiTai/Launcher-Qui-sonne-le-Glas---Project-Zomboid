@@ -70,6 +70,8 @@ public partial class App : Application
                 ? new VelopackUpdateService()
                 : new FakeUpdateService());
         services.AddSingleton<IServerInfoService, FakeServerInfoService>();
+        services.AddSingleton<ILauncherLogger>(_ => new FileLauncherLogger());
+        services.AddSingleton<IDiagnosticReportService, DiagnosticReportService>();
         services.AddSingleton<IFirstRunStore>(_ => FirstRunStore.CreateDefault());
 
         services.AddSingleton<DashboardViewModel>();

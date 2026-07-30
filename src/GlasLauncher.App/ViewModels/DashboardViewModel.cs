@@ -126,8 +126,8 @@ public partial class DashboardViewModel : ViewModelBase
             };
 
             var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
-                requiredIds: new[] { "111", "222", "333" },
-                collectionId: "3719763771");
+                requiredIds: WorkshopRequirement.RequiredIds,
+                collectionId: WorkshopRequirement.CollectionId);
             var workshopResult = WorkshopEvaluator.Evaluate(workshopStatus);
             var workshopCheckItem = new CheckItemViewModel(workshopResult);
             Checks.Add(workshopCheckItem);

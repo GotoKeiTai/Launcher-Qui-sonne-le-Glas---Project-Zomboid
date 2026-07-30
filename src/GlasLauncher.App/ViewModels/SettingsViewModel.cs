@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls;
@@ -17,13 +18,42 @@ public partial class SettingsViewModel : ViewModelBase
     private const string DiscordInviteUrl = "https://discord.gg/UmKM25QUhY";
 
     private readonly IUpdateService _updateService;
+    private readonly ISteamEnvironment _steamEnvironment;
+    private readonly IJavaModService _javaModService;
+    private readonly IDiagnosticReportService _diagnosticReportService;
 
-    public SettingsViewModel(IUpdateService updateService)
+    public SettingsViewModel(
+        IUpdateService updateService,
+        ISteamEnvironment steamEnvironment,
+        IJavaModService javaModService,
+        IDiagnosticReportService diagnosticReportService)
     {
         _updateService = updateService;
+        _steamEnvironment = steamEnvironment;
+        _javaModService = javaModService;
+        _diagnosticReportService = diagnosticReportService;
+        _versionInfoText = $"Launcher {_updateService.GetCurrentVersion()} · Chargement…";
+        _ = RefreshVersionInfoAsync();
     }
 
-    public string VersionInfoText => $"Launcher {_updateService.GetCurrentVersion()} · Project Zomboid 41.78.16 · Mod Java v1.0.0";
+    [ObservableProperty]
+    private string _versionInfoText;
+
+    private async Task RefreshVersionInfoAsync()
+    {
+        var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
+        var javaModInfo = await _javaModService.GetStatusAsync();
+        var javaModFile = javaModInfo.Files.FirstOrDefault();
+        var javaModVersionText = javaModFile switch
+        {
+            null => "non installé",
+            { IsUpToDate: true } => $"v{javaModFile.InstalledVersion}",
+            _ => "non installé"
+        };
+
+        VersionInfoText =
+            $"Launcher {_updateService.GetCurrentVersion()} · Project Zomboid {detectedVersion?.BuildId ?? "introuvable"} · Mod Java {javaModVersionText}";
+    }
 
     public event Action? BackRequested;
 
@@ -58,10 +88,20 @@ public partial class SettingsViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void GenerateDiagnosticReport()
+    private async Task GenerateDiagnosticReportAsync()
     {
-        StatusMessage = "Rapport généré (simulation).";
-        IsStatusSuccess = true;
+        try
+        {
+            var zipPath = await _diagnosticReportService.GenerateAsync();
+            Process.Start(new ProcessStartInfo("explorer.exe", $"/select,\"{zipPath}\"") { UseShellExecute = true });
+            StatusMessage = "Rapport généré et Explorateur ouvert.";
+            IsStatusSuccess = true;
+        }
+        catch (Exception ex)
+        {
+            StatusMessage = "Impossible de générer le rapport : " + ex.Message;
+            IsStatusSuccess = false;
+        }
     }
 
     [RelayCommand]
