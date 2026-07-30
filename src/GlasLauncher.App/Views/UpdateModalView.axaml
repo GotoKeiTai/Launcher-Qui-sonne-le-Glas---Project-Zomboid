@@ -38,16 +38,18 @@
 
       <Border Background="{StaticResource BgPanel2Brush}" BorderBrush="{StaticResource LineSoftBrush}"
               BorderThickness="1" CornerRadius="10" Padding="20" Margin="0,24,0,0">
-        <ItemsControl ItemsSource="{Binding UpdateInfo.ChangelogEntries}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate x:DataType="x:String">
-              <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
-                <TextBlock Text="–" Foreground="{StaticResource GoldDimBrush}" FontSize="13" Margin="0,0,10,0" />
-                <TextBlock Grid.Column="1" Text="{Binding}" Foreground="{StaticResource InkBrush}" FontSize="13" TextWrapping="Wrap" />
-              </Grid>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
+        <ScrollViewer MaxHeight="240" VerticalScrollBarVisibility="Auto">
+          <ItemsControl ItemsSource="{Binding UpdateInfo.ChangelogEntries}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <Grid ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                  <TextBlock Text="–" Foreground="{StaticResource GoldDimBrush}" FontSize="13" Margin="0,0,10,0" />
+                  <TextBlock Grid.Column="1" Text="{Binding}" Foreground="{StaticResource InkBrush}" FontSize="13" TextWrapping="Wrap" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
       </Border>
 
       <TextBlock Text="{Binding StatusMessage}" Margin="0,18,0,0"
