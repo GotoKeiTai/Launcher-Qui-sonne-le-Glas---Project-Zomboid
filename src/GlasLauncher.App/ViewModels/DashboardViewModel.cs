@@ -138,15 +138,15 @@ public partial class DashboardViewModel : ViewModelBase
             }
 
             // Workshop mods are informational, not blocking: Project Zomboid downloads any
-            // missing subscribed mods itself on launch, so the launcher doesn't need to gate
-            // play on them the way it does for Steam/version/Java-mod checks.
+            // missing subscribed mods itself when the player joins the server, so the launcher
+            // doesn't need to gate play on them the way it does for Steam/version/Java-mod checks.
             var blockingChecks = Checks.Where(c => c != workshopCheckItem).ToList();
             CanPlay = blockingChecks.All(c => c.Status == CheckStatus.Passed);
             var firstFailedBlockingCheck = blockingChecks.FirstOrDefault(c => c.Status == CheckStatus.Failed);
             StatusMessage = firstFailedBlockingCheck is not null
                 ? "Action requise — " + firstFailedBlockingCheck.Message
                 : workshopResult.Status == CheckStatus.Failed
-                    ? "Prêt à jouer — Project Zomboid téléchargera les mods Workshop manquants au lancement"
+                    ? "Prêt à jouer — Project Zomboid téléchargera les mods Workshop manquants en rejoignant le serveur"
                     : "Prêt à jouer — toutes les vérifications sont validées";
         }
         catch (Exception ex)
