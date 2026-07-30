@@ -29,12 +29,14 @@ public partial class RepairModalViewModel : ViewModelBase
     };
 
     private readonly IJavaModService _javaModService;
+    private readonly ILauncherLogger _logger;
 
     public event Action? Completed;
 
-    public RepairModalViewModel(IJavaModService javaModService)
+    public RepairModalViewModel(IJavaModService javaModService, ILauncherLogger logger)
     {
         _javaModService = javaModService;
+        _logger = logger;
         Steps = new ObservableCollection<RepairStepViewModel>();
         foreach (var name in StepOrder)
         {
@@ -72,6 +74,7 @@ public partial class RepairModalViewModel : ViewModelBase
             }
             PercentComplete = 100;
 
+            _logger.Info("Réparation du mod Java terminée avec succès.");
             await Task.Delay(400);
             Completed?.Invoke();
         }
@@ -85,6 +88,7 @@ public partial class RepairModalViewModel : ViewModelBase
                 }
             }
 
+            _logger.Error("Échec de la réparation du mod Java", ex);
             HasError = true;
             StatusMessage = "Erreur lors de la réparation : " + ex.Message;
         }

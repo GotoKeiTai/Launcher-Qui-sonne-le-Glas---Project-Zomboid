@@ -17,17 +17,20 @@ public partial class DashboardViewModel : ViewModelBase
     private readonly IServerInfoService _serverInfoService;
     private readonly IJavaModService _javaModService;
     private readonly IUpdateService _updateService;
+    private readonly ILauncherLogger _logger;
 
     public DashboardViewModel(
         ISteamEnvironment steamEnvironment,
         IServerInfoService serverInfoService,
         IJavaModService javaModService,
-        IUpdateService updateService)
+        IUpdateService updateService,
+        ILauncherLogger logger)
     {
         _steamEnvironment = steamEnvironment;
         _serverInfoService = serverInfoService;
         _javaModService = javaModService;
         _updateService = updateService;
+        _logger = logger;
         Checks = new ObservableCollection<CheckItemViewModel>();
         News = new ObservableCollection<NewsItem>();
         LauncherVersionText = _updateService.GetCurrentVersion();
@@ -148,9 +151,11 @@ public partial class DashboardViewModel : ViewModelBase
                 : workshopResult.Status == CheckStatus.Failed
                     ? "Prêt à jouer — Project Zomboid téléchargera les mods Workshop manquants en rejoignant le serveur"
                     : "Prêt à jouer — toutes les vérifications sont validées";
+            _logger.Info($"Vérifications terminées — CanPlay={CanPlay}, échecs={Checks.Count(c => c.Status == CheckStatus.Failed)}.");
         }
         catch (Exception ex)
         {
+            _logger.Error("Erreur lors de la vérification du Dashboard", ex);
             CanPlay = false;
             StatusMessage = "Erreur lors de la vérification : " + ex.Message;
         }

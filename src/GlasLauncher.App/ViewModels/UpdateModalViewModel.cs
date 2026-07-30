@@ -10,12 +10,14 @@ namespace GlasLauncher.App.ViewModels;
 public partial class UpdateModalViewModel : ViewModelBase
 {
     private readonly IUpdateService _updateService;
+    private readonly ILauncherLogger _logger;
 
     public event Action? Completed;
 
-    public UpdateModalViewModel(IUpdateService updateService, UpdateInfo updateInfo)
+    public UpdateModalViewModel(IUpdateService updateService, UpdateInfo updateInfo, ILauncherLogger logger)
     {
         _updateService = updateService;
+        _logger = logger;
         UpdateInfo = updateInfo;
     }
 
@@ -44,6 +46,7 @@ public partial class UpdateModalViewModel : ViewModelBase
         StatusMessage = "Téléchargement en cours… le launcher va redémarrer automatiquement.";
         IsStatusSuccess = true;
         var succeeded = false;
+        _logger.Info($"Application de la mise à jour {UpdateInfo.LatestVersion}…");
 
         try
         {
@@ -51,12 +54,14 @@ public partial class UpdateModalViewModel : ViewModelBase
             // Reached only when ApplyUpdateAsync returns normally instead of restarting
             // the process — i.e. FakeUpdateService in dev. The real Velopack path exits
             // during the call above and never comes back here.
+            _logger.Info("Mise à jour appliquée (chemin de développement).");
             StatusMessage = "Mise à jour installée — redémarrez le launcher pour l'appliquer.";
             succeeded = true;
             await Task.Delay(1500);
         }
         catch (Exception ex)
         {
+            _logger.Error("Échec de l'application de la mise à jour", ex);
             StatusMessage = "Erreur lors de la mise à jour : " + ex.Message;
             IsStatusSuccess = false;
         }

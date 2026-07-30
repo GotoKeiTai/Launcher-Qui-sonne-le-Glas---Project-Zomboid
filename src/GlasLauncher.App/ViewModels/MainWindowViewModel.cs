@@ -11,6 +11,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly IUpdateService _updateService;
     private readonly DashboardViewModel _dashboard;
     private readonly FirstRunViewModel _firstRun;
+    private readonly ILauncherLogger _logger;
 
     [ObservableProperty]
     private ViewModelBase _currentPage;
@@ -24,12 +25,14 @@ public partial class MainWindowViewModel : ViewModelBase
         NewsViewModel news,
         FirstRunViewModel firstRun,
         IJavaModService javaModService,
-        IUpdateService updateService)
+        IUpdateService updateService,
+        ILauncherLogger logger)
     {
         _dashboard = dashboard;
         _firstRun = firstRun;
         _javaModService = javaModService;
         _updateService = updateService;
+        _logger = logger;
         _currentPage = dashboard;
 
         dashboard.SettingsRequested += () => CurrentPage = settings;
@@ -58,14 +61,16 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
-        var modal = new UpdateModalViewModel(_updateService, updateInfo);
+        _logger.Info($"Mise à jour disponible : {updateInfo.CurrentVersion} → {updateInfo.LatestVersion}");
+        var modal = new UpdateModalViewModel(_updateService, updateInfo, _logger);
         modal.Completed += () => CurrentModal = null;
         CurrentModal = modal;
     }
 
     private void OnRepairRequested()
     {
-        var modal = new RepairModalViewModel(_javaModService);
+        _logger.Info("Réparation du mod Java demandée.");
+        var modal = new RepairModalViewModel(_javaModService, _logger);
         modal.Completed += async () =>
         {
             CurrentModal = null;
