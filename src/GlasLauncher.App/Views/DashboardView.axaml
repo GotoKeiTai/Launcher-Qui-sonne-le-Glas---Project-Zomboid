@@ -34,7 +34,7 @@
           </Grid>
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="Mod Java" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
-            <TextBlock Grid.Column="1" Text="v1.0.0" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="{Binding JavaModVersionText}" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
           </Grid>
         </StackPanel>
 

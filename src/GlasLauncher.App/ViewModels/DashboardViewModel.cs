@@ -63,6 +63,9 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private string _gameVersionText = "—";
 
+    [ObservableProperty]
+    private string _javaModVersionText = "—";
+
     public ObservableCollection<CheckItemViewModel> Checks { get; }
 
     public ObservableCollection<NewsItem> News { get; }
@@ -113,6 +116,14 @@ public partial class DashboardViewModel : ViewModelBase
 
             var javaModInfo = await _javaModService.GetStatusAsync();
             Checks.Add(new CheckItemViewModel(JavaModEvaluator.Evaluate(javaModInfo)));
+
+            var javaModFile = javaModInfo.Files.FirstOrDefault();
+            JavaModVersionText = javaModFile switch
+            {
+                null => "—",
+                { IsUpToDate: true } => $"v{javaModFile.InstalledVersion}",
+                _ => "non installé"
+            };
 
             var workshopStatus = await _steamEnvironment.GetWorkshopStatusAsync(
                 requiredIds: new[] { "111", "222", "333" },
