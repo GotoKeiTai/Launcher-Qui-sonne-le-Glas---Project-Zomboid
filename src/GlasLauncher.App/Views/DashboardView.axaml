@@ -30,7 +30,7 @@
           </Grid>
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="Project Zomboid" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />
-            <TextBlock Grid.Column="1" Text="41.78.16" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
+            <TextBlock Grid.Column="1" Text="{Binding GameVersionText}" Foreground="{StaticResource InkDimBrush}" FontSize="11" />
           </Grid>
           <Grid ColumnDefinitions="*,Auto">
             <TextBlock Text="Mod Java" Foreground="{StaticResource InkFaintBrush}" FontSize="11" />

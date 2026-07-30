@@ -60,6 +60,9 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private string _launcherVersionText = "";
 
+    [ObservableProperty]
+    private string _gameVersionText = "—";
+
     public ObservableCollection<CheckItemViewModel> Checks { get; }
 
     public ObservableCollection<NewsItem> News { get; }
@@ -98,6 +101,10 @@ public partial class DashboardViewModel : ViewModelBase
 
             var versionRequirement = await _serverInfoService.GetGameVersionRequirementAsync();
             var detectedVersion = await _steamEnvironment.GetInstalledGameVersionAsync();
+            // Steam only exposes a buildid locally, not a human "41.78.20"-style version —
+            // there's no local mapping from one to the other — so the buildid is the most
+            // honest thing to show here.
+            GameVersionText = detectedVersion?.BuildId ?? "—";
 
             var versionResult = detectedVersion is null
                 ? new CheckResult("Version conforme", CheckStatus.Failed, "Impossible de détecter Project Zomboid.")
