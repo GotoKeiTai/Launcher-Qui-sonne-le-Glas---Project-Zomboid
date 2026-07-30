@@ -43,3 +43,28 @@ jobs:
 
       - name: Upload to GitHub Releases
         run: vpk upload github --repoUrl https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid --token ${{ secrets.GITHUB_TOKEN }} --publish --outputDir Releases --releaseName "Glas Launcher $env:VERSION" --tag ${{ github.ref_name }}
+
+      - name: Publish SHA-256 checksum
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          $hash = (Get-FileHash -Path "Releases\GlasLauncher-win-Setup.exe" -Algorithm SHA256).Hash
+          "SHA256=$hash" >> $env:GITHUB_ENV
+          Set-Content -Path "GlasLauncher-win-Setup.exe.sha256.txt" -Value "$hash  GlasLauncher-win-Setup.exe"
+          gh release upload ${{ github.ref_name }} "GlasLauncher-win-Setup.exe.sha256.txt" --repo GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid
+
+      - name: Submit installer to VirusTotal
+        if: ${{ secrets.VIRUSTOTAL_API_KEY != '' }}
+        env:
+          VIRUSTOTAL_API_KEY: ${{ secrets.VIRUSTOTAL_API_KEY }}
+        run: |
+          $headers = @{ "x-apikey" = $env:VIRUSTOTAL_API_KEY }
+          $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Headers $headers -Method Get
+          Invoke-RestMethod -Uri $uploadUrlResponse.data -Headers $headers -Method Post -Form @{ file = Get-Item "Releases\GlasLauncher-win-Setup.exe" } | Out-Null
+          $reportUrl = "https://www.virustotal.com/gui/file/$env:SHA256"
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## Rapport VirusTotal`n`nSoumis avec succes : $reportUrl`n`n(l'analyse prend quelques minutes a se completer avant que le rapport ne s'affiche)"
+          Write-Output "Rapport VirusTotal : $reportUrl"
+
+      - name: Release summary
+        run: |
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## SHA-256`n`n``$env:SHA256``"
