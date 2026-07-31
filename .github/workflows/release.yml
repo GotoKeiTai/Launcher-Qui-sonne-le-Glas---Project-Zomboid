@@ -63,23 +63,16 @@ jobs:
           $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Headers $headers -Method Get
           $uploadUrl = $uploadUrlResponse.data
 
-          # Invoke-RestMethod's -Form parameter is unreliable for file uploads across
-          # PowerShell versions ("Malformed multipart body") — build the multipart
-          # request manually with HttpClient instead, the standard reliable approach.
-          Add-Type -AssemblyName System.Net.Http
-          $client = New-Object System.Net.Http.HttpClient
-          $client.DefaultRequestHeaders.Add("x-apikey", $env:VIRUSTOTAL_API_KEY)
-          $fileStream = [System.IO.File]::OpenRead("Releases\GlasLauncher-win-Setup.exe")
-          try {
-            $content = New-Object System.Net.Http.MultipartFormDataContent
-            $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
-            $content.Add($fileContent, "file", "GlasLauncher-win-Setup.exe")
-            $response = $client.PostAsync($uploadUrl, $content).GetAwaiter().GetResult()
-            $response.EnsureSuccessStatusCode() | Out-Null
-          }
-          finally {
-            $fileStream.Dispose()
-            $client.Dispose()
+          # PowerShell's own HTTP stacks (Invoke-RestMethod -Form, and hand-rolled
+          # HttpClient/MultipartFormDataContent) both failed here in practice
+          # ("Malformed multipart body", then a 400 Bad Request) despite matching
+          # VirusTotal's documented format. curl.exe -F is what VirusTotal's own docs
+          # show and is pre-installed on windows-latest runners — use that instead.
+          # No x-apikey header on this call: upload_url is a one-time pre-signed URL
+          # that carries its own authorization.
+          curl.exe --fail --silent --show-error -X POST $uploadUrl -F "file=@Releases\GlasLauncher-win-Setup.exe"
+          if ($LASTEXITCODE -ne 0) {
+            throw "curl upload to VirusTotal failed with exit code $LASTEXITCODE"
           }
 
           $reportUrl = "https://www.virustotal.com/gui/file/$env:SHA256"
