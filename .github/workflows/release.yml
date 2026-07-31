@@ -68,9 +68,10 @@ jobs:
           # ("Malformed multipart body", then a 400 Bad Request) despite matching
           # VirusTotal's documented format. curl.exe -F is what VirusTotal's own docs
           # show and is pre-installed on windows-latest runners — use that instead.
-          # No x-apikey header on this call: upload_url is a one-time pre-signed URL
-          # that carries its own authorization.
-          curl.exe --fail --silent --show-error -X POST $uploadUrl -F "file=@Releases\GlasLauncher-win-Setup.exe"
+          # Dropping the x-apikey header on this call got a 401 (confirmed: the
+          # upload_url does require it, unlike some other providers' pre-signed URLs) —
+          # keep it.
+          curl.exe --fail --silent --show-error -X POST $uploadUrl -H "x-apikey: $env:VIRUSTOTAL_API_KEY" -F "file=@Releases\GlasLauncher-win-Setup.exe"
           if ($LASTEXITCODE -ne 0) {
             throw "curl upload to VirusTotal failed with exit code $LASTEXITCODE"
           }
