@@ -22,7 +22,7 @@ Un certificat de signature de code coûte 60-225 $/an récurrents — disproport
 
 ### Comment vérifier par vous-même (plutôt que de nous croire sur parole)
 
-- **Code source entièrement public** — ce dépôt, y compris le [workflow qui construit et publie chaque release](.github/workflows/release.yml) (logs publics sur l'onglet Actions).
+- **Code source entièrement public** — ce dépôt, y compris le [workflow qui construit et publie chaque release](.github/workflows/release.yml) (logs publics sur l'onglet Actions). Le dossier `tests/` que vous verrez dans le code contient des tests automatisés (des vérifications de qualité que les développeurs font tourner à chaque changement) — pas une "version d'essai" du launcher : la version que vous téléchargez est la version complète.
 - **Somme de contrôle SHA-256** — publiée en tant que fichier `.sha256.txt` sur chaque [release](https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid/releases/latest), pour vérifier que l'installeur téléchargé n'a pas été altéré.
 - **Scan VirusTotal** — un lien de rapport public est généré à chaque release (visible dans le résumé du build sur l'onglet Actions).
 
