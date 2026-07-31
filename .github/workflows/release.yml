@@ -57,6 +57,7 @@ jobs:
 
       - name: Submit installer to VirusTotal
         if: ${{ env.VIRUSTOTAL_API_KEY != '' }}
+        shell: pwsh
         run: |
           $headers = @{ "x-apikey" = $env:VIRUSTOTAL_API_KEY }
           $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Headers $headers -Method Get
@@ -66,5 +67,6 @@ jobs:
           Write-Output "Rapport VirusTotal : $reportUrl"
 
       - name: Release summary
+        if: always()
         run: |
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## SHA-256`n`n``$env:SHA256``"
