@@ -61,7 +61,27 @@ jobs:
         run: |
           $headers = @{ "x-apikey" = $env:VIRUSTOTAL_API_KEY }
           $uploadUrlResponse = Invoke-RestMethod -Uri "https://www.virustotal.com/api/v3/files/upload_url" -Headers $headers -Method Get
-          Invoke-RestMethod -Uri $uploadUrlResponse.data -Headers $headers -Method Post -Form @{ file = Get-Item "Releases\GlasLauncher-win-Setup.exe" } | Out-Null
+          $uploadUrl = $uploadUrlResponse.data
+
+          # Invoke-RestMethod's -Form parameter is unreliable for file uploads across
+          # PowerShell versions ("Malformed multipart body") — build the multipart
+          # request manually with HttpClient instead, the standard reliable approach.
+          Add-Type -AssemblyName System.Net.Http
+          $client = New-Object System.Net.Http.HttpClient
+          $client.DefaultRequestHeaders.Add("x-apikey", $env:VIRUSTOTAL_API_KEY)
+          $fileStream = [System.IO.File]::OpenRead("Releases\GlasLauncher-win-Setup.exe")
+          try {
+            $content = New-Object System.Net.Http.MultipartFormDataContent
+            $fileContent = New-Object System.Net.Http.StreamContent($fileStream)
+            $content.Add($fileContent, "file", "GlasLauncher-win-Setup.exe")
+            $response = $client.PostAsync($uploadUrl, $content).GetAwaiter().GetResult()
+            $response.EnsureSuccessStatusCode() | Out-Null
+          }
+          finally {
+            $fileStream.Dispose()
+            $client.Dispose()
+          }
+
           $reportUrl = "https://www.virustotal.com/gui/file/$env:SHA256"
           Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "## Rapport VirusTotal`n`nSoumis avec succes : $reportUrl`n`n(l'analyse prend quelques minutes a se completer avant que le rapport ne s'affiche)"
           Write-Output "Rapport VirusTotal : $reportUrl"
