@@ -1,4 +1,8 @@
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 using GlasLauncher.Core.Logic;
+using GlasLauncher.Core.Models;
 using Velopack;
 using Velopack.Sources;
 
@@ -7,9 +11,21 @@ namespace GlasLauncher.Core.Services;
 public class VelopackUpdateService : IUpdateService
 {
     private const string RepoUrl = "https://github.com/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid";
+    private const string ReleasesApiUrl = "https://api.github.com/repos/GotoKeiTai/Launcher-Qui-sonne-le-Glas---Project-Zomboid/releases";
+
+    private static readonly JsonSerializerOptions ReleasesApiOptions = new() { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
 
     private readonly UpdateManager _manager = new(new GithubSource(RepoUrl, accessToken: null, prerelease: false));
+    private readonly HttpClient _httpClient = CreateChangelogHttpClient();
     private Velopack.UpdateInfo? _pendingUpdate;
+
+    private static HttpClient CreateChangelogHttpClient()
+    {
+        var client = new HttpClient { Timeout = TimeSpan.FromSeconds(10) };
+        // GitHub's API rejects requests with no User-Agent header.
+        client.DefaultRequestHeaders.UserAgent.ParseAdd("GlasLauncher");
+        return client;
+    }
 
     public async Task<GlasLauncher.Core.Models.UpdateInfo?> CheckForUpdateAsync()
     {
@@ -52,6 +68,19 @@ public class VelopackUpdateService : IUpdateService
         catch (Exception)
         {
             return "dev";
+        }
+    }
+
+    public async Task<IReadOnlyList<ChangelogEntry>> GetChangelogAsync()
+    {
+        try
+        {
+            var releases = await _httpClient.GetFromJsonAsync<List<GitHubReleaseDto>>(ReleasesApiUrl, ReleasesApiOptions);
+            return releases is null ? Array.Empty<ChangelogEntry>() : GitHubReleaseChangelogMapper.Map(releases);
+        }
+        catch (Exception)
+        {
+            return Array.Empty<ChangelogEntry>();
         }
     }
 }

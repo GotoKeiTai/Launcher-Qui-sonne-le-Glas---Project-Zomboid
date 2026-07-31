@@ -7,5 +7,4 @@ public interface IServerInfoService
     Task<ServerInfo> GetServerInfoAsync();
     Task<GameVersionRequirement> GetGameVersionRequirementAsync();
     Task<IReadOnlyList<NewsItem>> GetNewsAsync();
-    Task<IReadOnlyList<ChangelogEntry>> GetChangelogAsync();
 }

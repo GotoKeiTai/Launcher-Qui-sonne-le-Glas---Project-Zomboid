@@ -7,4 +7,5 @@ public interface IUpdateService
     Task<UpdateInfo?> CheckForUpdateAsync();
     Task ApplyUpdateAsync();
     string GetCurrentVersion();
+    Task<IReadOnlyList<ChangelogEntry>> GetChangelogAsync();
 }

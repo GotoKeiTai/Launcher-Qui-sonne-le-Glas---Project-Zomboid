@@ -11,12 +11,14 @@ namespace GlasLauncher.App.ViewModels;
 public partial class NewsViewModel : ViewModelBase
 {
     private readonly IServerInfoService _serverInfoService;
+    private readonly IUpdateService _updateService;
 
     public event Action? BackRequested;
 
-    public NewsViewModel(IServerInfoService serverInfoService)
+    public NewsViewModel(IServerInfoService serverInfoService, IUpdateService updateService)
     {
         _serverInfoService = serverInfoService;
+        _updateService = updateService;
         NewsItems = new ObservableCollection<NewsItem>();
         ChangelogEntries = new ObservableCollection<ChangelogEntry>();
         IsNewsTabActive = true;
@@ -63,7 +65,7 @@ public partial class NewsViewModel : ViewModelBase
                 NewsItems.Add(item);
             }
 
-            foreach (var entry in await _serverInfoService.GetChangelogAsync())
+            foreach (var entry in await _updateService.GetChangelogAsync())
             {
                 ChangelogEntries.Add(entry);
             }
