@@ -2,6 +2,12 @@
 
 Ce fichier résume ce qu'une session Claude Code sans historique (ex: sur la VM Windows) doit savoir pour reprendre le développement sans repartir de zéro. Le cahier des charges (`docs/cahier-des-charges.md`) reste la référence pour la vision produit et les specs fonctionnelles complètes — ce document-ci couvre le processus de travail et l'état d'avancement.
 
+## Structure des branches (depuis le 2026-07-31)
+
+**`main`** ne contient que ce qui est nécessaire pour builder/faire tourner l'app (code, tests, workflows, `README.md`, licence) — délibérément sans `docs/`, pour rester clair pour un joueur qui irait vérifier le code source (voir la section Sécurité du README). **`dev`** contient tout ce que `main` contient, plus `docs/` (ce fichier, le cahier des charges, les specs et — nouveauté — les plans, désormais committés ici au lieu de rester en local uniquement). Toujours travailler/consulter la doc interne depuis `dev`. `main` a un `CLAUDE.md` minimal qui pointe vers `dev` pour une session qui démarrerait dessus par erreur.
+
+À chaque changement de code fait sur `main`, penser à répercuter le `.gitignore`/autres fichiers non-doc pertinents sur `dev` aussi (pas de merge automatique simple entre les deux vu que `dev` a des fichiers que `main` n'a pas).
+
 ## Où on en est
 
 - Toute l'UI (Dashboard prêt/bloqué, Paramètres, Actualités/Changelog, Premier lancement, modales Réparation/Mise à jour) est implémentée — voir `docs/cahier-des-charges.md` §6.1 pour le détail écran par écran.
